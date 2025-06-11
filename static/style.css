@@ -1,0 +1,214 @@
+/* ===== CONFIGURAZIONE GLOBALE COLORI E VARIABILI ===== */
+:root {
+  /* Colori principali del tema festival */
+  --primary: #d2691e;    /* Arancione scuro - colore principale del brand */
+  --secondary: #f4a460;  /* Arancione chiaro - colore secondario */
+  --accent: #ff7f50;     /* Corallo - colore di accento per evidenziazioni */
+  --dark: #8b4513;       /* Marrone scuro - per contrasti e testi */
+  --success: #228b22;    /* Verde bosco - per messaggi di successo */
+  
+  /* Gradienti personalizzati per elementi grafici avanzati */
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--secondary) 100%
+  );
+  --gradient-dark: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+}
+
+/* ===== OVERRIDE COMPONENTI BOOTSTRAP ===== */
+
+/* Pulsanti principali con gradiente personalizzato */
+.btn-primary {
+  background: var(--gradient-primary) !important;  /* Gradiente arancione */
+  border-color: var(--primary) !important;         /* Bordo arancione scuro */
+}
+
+/* Navbar con tema scuro e gradiente */
+.navbar {
+  background: var(--gradient-dark) !important;     /* Gradiente marrone-arancione */
+}
+
+/* Header principale del festival - elemento grafico di impatto */
+.festival-header {
+  background: var(--gradient-primary) !important;  /* Sfondo con gradiente */
+  color: white !important;                         /* Testo bianco per contrasto */
+}
+
+/* Forza tutti gli elementi figli dell'header ad essere bianchi */
+.festival-header * {
+  color: white !important;
+}
+
+/* ===== PERSONALIZZAZIONE BADGE BOOTSTRAP ===== */
+
+/* Badge primari con gradiente */
+.badge.bg-primary {
+  background: var(--gradient-primary) !important;
+}
+
+/* Badge secondari con gradiente scuro */
+.badge.bg-secondary {
+  background: var(--gradient-dark) !important;
+}
+
+/* Badge informativi con colore accent */
+.badge.bg-info {
+  background: var(--gradient-accent) !important;
+  color: white !important;
+}
+
+/* Badge di successo con gradiente verde-arancione */
+.badge.bg-success {
+  background: linear-gradient(
+    135deg,
+    var(--success),
+    var(--primary)
+  ) !important;
+}
+
+/* ===== ELEMENTI DI LAYOUT ===== */
+
+/* Footer coordinato con il tema del sito */
+.footer-festival {
+  background: var(--gradient-dark) !important;
+  color: white !important;
+}
+
+/* ===== LOGICA BIGLIETTI - FUNZIONALITÀ CORE DELL'APP ===== */
+
+/* Display di default per i controlli dei giorni */
+.checkbox-day {
+  display: inline-block;  /* Checkbox visibili di default */
+}
+.radio-day {
+  display: none;          /* Radio nascosti di default */
+}
+
+/* BIGLIETTO GIORNALIERO: mostra radio, nascondi checkbox */
+form:has(input[value="daily"]:checked) .checkbox-day {
+  display: none !important;
+}
+form:has(input[value="daily"]:checked) .radio-day {
+  display: inline-block !important;
+}
+
+/* FULL PASS: disabilita la selezione giorni (non necessaria) */
+form:has(input[value="full"]:checked) .day-selection {
+  opacity: 0.5;           /* Opacità ridotta per indicare disabilitazione */
+  pointer-events: none;   /* Impedisce interazione con i controlli */
+}
+
+/* PASS 2 GIORNI: mantieni checkbox per selezione multipla */
+form:has(input[value="2days"]:checked) .checkbox-day {
+  display: inline-block !important;
+}
+form:has(input[value="2days"]:checked) .radio-day {
+  display: none !important;
+}
+
+/* ===== EFFETTI HOVER E TRANSIZIONI ===== */
+
+/* Effetto hover per le card - sollevamento leggero */
+.card:hover {
+  transform: translateY(-2px);  /* Sollevamento di 2px */
+  transition: transform 0.2s;   /* Transizione fluida */
+}
+
+/* Effetto hover per i pulsanti */
+.btn:hover {
+  transform: translateY(-1px);  /* Sollevamento di 1px (più sottile delle card) */
+  transition: transform 0.2s;
+}
+
+/* ===== COMPONENTI BADGE PERSONALIZZATI ===== */
+
+/* Container per raggruppare badge in modo ordinato */
+.badge-container {
+  text-align: center;     /* Centra i badge */
+  margin-bottom: 1rem;    /* Spazio sotto il container */
+}
+
+/* Spaziatura uniforme tra i badge */
+.badge-container .badge {
+  margin: 0.25rem;        /* Margine di 4px attorno a ogni badge */
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+/* Classe per testi con colore primario del sito */
+.text-site-primary {
+  color: var(--primary) !important;
+}
+
+/* ===== SISTEMA SELEZIONE BIGLIETTI - INTERFACCIA UTENTE ===== */
+
+/* Stile base per le card opzione biglietto */
+.ticket-option {
+  border: 2px solid #dee2e6;     /* Bordo grigio chiaro di default */
+  transition: all 0.3s ease;     /* Transizione fluida per tutti i cambiamenti */
+  cursor: pointer;               /* Cursore a mano per indicare interattività */
+  position: relative;            /* Necessario per il posizionamento del check mark */
+}
+
+/* Effetto hover sulle card biglietto (solo se non disabilitate) */
+.ticket-option:hover:not(.disabled-ticket) {
+  border-color: var(--primary);                      /* Bordo arancione al hover */
+  box-shadow: 0 4px 12px rgba(210, 105, 30, 0.15);  /* Ombra arancione sottile */
+}
+
+/* ===== STATI SELEZIONATI PER OGNI TIPO DI BIGLIETTO ===== */
+
+/* Card selezionata - applica stili quando il radio button corrispondente è checked */
+#daily:checked ~ .row .ticket-option:has(label[for="daily"]),
+#twodays:checked ~ .row .ticket-option:has(label[for="twodays"]),
+#full:checked ~ .row .ticket-option:has(label[for="full"]) {
+  border-color: var(--primary) !important;           /* Bordo arancione forte */
+  background-color: rgba(210, 105, 30, 0.05);        /* Sfondo arancione molto tenue */
+  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);    /* Ombra arancione più marcata */
+}
+
+/* ===== INDICATORE VISIVO DI SELEZIONE ===== */
+
+/* Check mark circolare nell'angolo in alto a destra delle card selezionate */
+#daily:checked ~ .row .ticket-option:has(label[for="daily"])::before,
+#twodays:checked ~ .row .ticket-option:has(label[for="twodays"])::before,
+#full:checked ~ .row .ticket-option:has(label[for="full"])::before {
+  content: "✓";                    /* Simbolo di spunta */
+  position: absolute;              /* Posizionamento assoluto */
+  top: 15px;                       /* 15px dall'alto */
+  right: 15px;                     /* 15px da destra */
+  background: var(--primary);      /* Sfondo arancione */
+  color: white;                    /* Testo bianco */
+  width: 24px;                     /* Larghezza cerchio */
+  height: 24px;                    /* Altezza cerchio */
+  border-radius: 50%;              /* Forma circolare */
+  display: flex;                   /* Flexbox per centrare il contenuto */
+  align-items: center;             /* Centra verticalmente */
+  justify-content: center;         /* Centra orizzontalmente */
+  font-weight: bold;               /* Testo in grassetto */
+  font-size: 14px;                 /* Dimensione font */
+  z-index: 10;                     /* Sopra altri elementi */
+}
+
+/* ===== STATI DISABILITATI ===== */
+
+/* Card biglietto disabilitate */
+.disabled-ticket {
+  opacity: 0.6;                    /* Opacità ridotta per indicare disabilitazione */
+  cursor: not-allowed !important;  /* Cursore "vietato" */
+}
+
+/* ===== GESTIONE CURSORI ===== */
+
+/* Cursore pointer per le label delle card biglietto */
+.ticket-option label {
+  cursor: pointer;
+}
+
+/* Cursore "not-allowed" per card e label disabilitate */
+.disabled-ticket,
+.disabled-ticket label {
+  cursor: not-allowed !important;
+}
+

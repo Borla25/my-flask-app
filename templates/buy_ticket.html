@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+<!-- Personalizza il titolo della pagina ereditando da base.html -->
+{% block title %}Acquista Biglietto - {{ super() }}{% endblock %} {% block
+content %}
+<!-- Contenitore principale della pagina con padding verticale -->
+<section class="container py-4">
+  <!-- Riga centrata con colonna responsive per il form -->
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Card principale che contiene tutto il form di acquisto -->
+      <div class="card shadow">
+        <!-- Header della card con titolo e icona -->
+        <div class="card-header">
+          <h1>
+            <!-- Icona Font Awesome per biglietti -->
+            <i class="fas fa-ticket-alt me-2"></i>Acquista il tuo Biglietto
+          </h1>
+        </div>
+
+        <!-- Corpo della card contenente il form -->
+        <div class="card-body p-4">
+          <!-- Form che invia dati via POST alla stessa route -->
+          <form method="POST">
+            <!-- ===== SEZIONE 1: SELEZIONE TIPO BIGLIETTO ===== -->
+            <fieldset class="mb-4">
+              <legend class="h5 mb-3">Scegli il tipo di biglietto:</legend>
+
+              <!-- Input radio FUORI dalle card per CSS -->
+              <input
+                type="radio"
+                id="daily"
+                name="ticket_type"
+                value="daily"
+                {%
+                if
+                has_multi_day
+                %}disabled{%
+                endif
+                %}
+                style="display: none"
+              />
+              <input
+                type="radio"
+                id="twodays"
+                name="ticket_type"
+                value="2days"
+                {%
+                if
+                existing_tickets
+                %}disabled{%
+                endif
+                %}
+                style="display: none"
+              />
+              <input
+                type="radio"
+                id="full"
+                name="ticket_type"
+                value="full"
+                {%
+                if
+                existing_tickets
+                %}disabled{%
+                endif
+                %}
+                style="display: none"
+              />
+
+              <div class="row">
+                <!-- ✅ USA I DATI DAL CONTROLLER -->
+                {% for ticket in ticket_types %}
+                <div class="col-md-4 mb-3">
+                  <div
+                    class="card h-100 ticket-option {% if ticket.disabled %}disabled-ticket{% endif %}"
+                  >
+                    <div class="card-body text-center p-4 d-flex flex-column">
+                      <label
+                        for="{{ ticket.id }}"
+                        class="card-title w-100 {% if ticket.disabled %}text-muted{% endif %}"
+                      >
+                        <h2 class="h5 mb-3">
+                          {{ ticket.title }} {% if ticket.disabled %}
+                          <i
+                            class="fas fa-lock ms-2 text-muted"
+                            title="Non disponibile"
+                          ></i>
+                          {% endif %}
+                        </h2>
+                      </label>
+
+                      <p
+                        class="card-text mb-3 flex-grow-1 {% if ticket.disabled %}text-muted{% endif %}"
+                      >
+                        {% if ticket.disabled %} Non disponibile - {{
+                        ticket.disabled_reason }} {% else %} {{
+                        ticket.description }} {% endif %}
+                      </p>
+
+                      <div class="mt-auto">
+                        <strong
+                          class="price text-primary h4 d-block {% if ticket.disabled %}text-muted{% endif %}"
+                        >
+                          €{{ ticket.price }}
+                        </strong>
+
+                        {% if not ticket.disabled and ticket.discount %}
+                        <small class="text-muted"
+                          >Risparmia €{{ ticket.discount }}!</small
+                        >
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </fieldset>
+
+            <!-- ===== SEZIONE 2: SELEZIONE GIORNI ===== -->
+            {% if not has_multi_day %}
+            <div class="day-selection">
+              <fieldset class="mb-4">
+                <legend class="h5">Seleziona i giorni:</legend>
+
+                <div class="row">
+                  <!-- ✅ USA I DATI DAL CONTROLLER -->
+                  {% for day in festival_days %}
+                  <div class="col-md-4">
+                    <div
+                      class="form-check p-3 border rounded mb-2 {% if day.value in covered_days %}bg-light{% endif %}"
+                    >
+                      <input
+                        class="form-check-input checkbox-day"
+                        type="checkbox"
+                        id="{{ day.id_prefix }}_check"
+                        name="days"
+                        value="{{ day.value }}"
+                        {%
+                        if
+                        day.value
+                        in
+                        covered_days
+                        %}disabled{%
+                        endif
+                        %}
+                      />
+
+                      <input
+                        class="form-check-input radio-day"
+                        type="radio"
+                        id="{{ day.id_prefix }}_radio"
+                        name="single_day"
+                        value="{{ day.value }}"
+                        {%
+                        if
+                        day.value
+                        in
+                        covered_days
+                        %}disabled{%
+                        endif
+                        %}
+                        style="display: none"
+                      />
+
+                      <label
+                        class="form-check-label w-100"
+                        for="{{ day.id_prefix }}_check"
+                      >
+                        <strong class="d-block">
+                          {{ day.label }} {% if day.value in covered_days %}
+                          <i class="fas fa-check-circle text-success ms-1"></i>
+                          {% endif %}
+                        </strong>
+
+                        <small class="text-muted">
+                          {% if day.value in covered_days %} Già acquistato {%
+                          else %} Disponibili: {{ availability[day.value] or 200
+                          }} posti {% endif %}
+                        </small>
+                      </label>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </fieldset>
+            </div>
+            {% endif %}
+
+            <!-- ===== SEZIONE 3: ALERT INFORMATIVI ===== -->
+
+            <!-- Alert prioritario: Pass multi-giorno esistente -->
+            {% if has_multi_day %}
+            <div class="alert alert-info" role="alert">
+              <h3 class="h6 mb-2">
+                <i class="fas fa-info-circle me-2"></i>Hai già un pass
+                multi-giorno
+              </h3>
+              <p class="mb-0">
+                Non puoi acquistare altri biglietti poiché il tuo pass copre già
+                tutti i giorni del festival.
+              </p>
+            </div>
+
+            <!-- Alert secondario: Biglietti esistenti (solo se non ha multi-day) -->
+            {% elif existing_tickets %}
+            <div class="alert alert-warning" role="alert">
+              <h3 class="h6 mb-2">
+                <i class="fas fa-exclamation-triangle me-2"></i>Biglietti già
+                acquistati
+              </h3>
+              <p class="mb-0">
+                Puoi acquistare solo biglietti giornalieri per giorni non ancora
+                coperti dai tuoi acquisti precedenti.
+              </p>
+            </div>
+            {% endif %}
+
+            <!-- ===== SEZIONE 5: SUBMIT BUTTON ===== -->
+            <!-- Bottone di submit che occupa tutta la larghezza -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <!-- Icona carrello per l'acquisto -->
+                <i class="fas fa-shopping-cart me-2"></i>Procedi all'Acquisto
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

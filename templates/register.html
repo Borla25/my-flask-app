@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+<!-- Personalizza il titolo della pagina ereditando da base.html -->
+{% block title %}Registrazione - {{ super() }}{% endblock %} {% block content %}
+<!-- Contenitore principale della pagina di registrazione -->
+<main class="container py-5">
+  <!-- Riga centrata con colonna responsive per il form -->
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <!-- Card principale contenente il form di registrazione -->
+      <article class="card shadow border-0">
+        <!-- Header della card con titolo principale -->
+        <header class="card-header text-center">
+          <h1 class="h3 fw-bold mb-0">
+            <!-- Icona Font Awesome per la registrazione -->
+            <i class="fas fa-user-plus me-2 text-primary"></i>Registrazione
+          </h1>
+        </header>
+
+        <!-- Corpo della card contenente tutto il form -->
+        <div class="card-body p-4">
+          <!-- Form che invia dati via POST alla stessa route -->
+          <form method="POST">
+            <!-- Prima sezione: Informazioni personali -->
+            <div class="mb-4">
+              <!-- Grid a due colonne per nome e email -->
+              <div class="row">
+                <!-- Campo Nome Completo (metà larghezza su desktop) -->
+                <div class="col-md-6 mb-3">
+                  <label for="full_name" class="form-label fw-semibold"
+                    >Nome completo</label
+                  >
+                  <!-- Input text obbligatorio per nome e cognome -->
+                  <input
+                    type="text"
+                    class="form-control rounded border-2"
+                    id="full_name"
+                    name="full_name"
+                    required
+                  />
+                  <!-- Testo di aiuto che spiega cosa inserire -->
+                  <div class="form-text small">
+                    Inserisci il tuo nome e cognome
+                  </div>
+                </div>
+
+                <!-- Campo Email (metà larghezza su desktop) -->
+                <div class="col-md-6 mb-3">
+                  <label for="email" class="form-label fw-semibold"
+                    >Email</label
+                  >
+                  <!-- Input email con validazione browser automatica -->
+                  <input
+                    type="email"
+                    class="form-control rounded border-2"
+                    id="email"
+                    name="email"
+                    required
+                  />
+                  <!-- Spiegazione dell'uso dell'email -->
+                  <div class="form-text small">
+                    Utilizzeremo questa email per contattarti
+                  </div>
+                </div>
+              </div>
+
+              <!-- Campo Password (larghezza completa) -->
+              <div class="mb-3">
+                <label for="password" class="form-label fw-semibold"
+                  >Password</label
+                >
+                <!-- Input password con validazione lunghezza minima -->
+                <input
+                  type="password"
+                  class="form-control rounded border-2"
+                  id="password"
+                  name="password"
+                  required
+                  minlength="8"
+                />
+                <!-- Informazione sui requisiti della password -->
+                <div class="form-text small">Minimo 8 caratteri</div>
+              </div>
+            </div>
+
+            <!-- Seconda sezione: Tipo di account -->
+            <div class="mb-4">
+              <label for="user_type" class="form-label fw-semibold"
+                >Tipo di account</label
+              >
+              <!-- Select dropdown per scegliere ruolo utente -->
+              <select
+                class="form-select rounded border-2"
+                id="user_type"
+                name="user_type"
+                required
+              >
+                <!-- Opzione placeholder che forza la selezione -->
+                <option value="">Seleziona...</option>
+                <!-- Ruolo partecipante: può comprare biglietti -->
+                <option value="participant">Partecipante</option>
+                <!-- Ruolo organizzatore: può creare performance -->
+                <option value="organizer">Organizzatore</option>
+              </select>
+              <!-- Spiegazione dettagliata delle differenze tra i ruoli -->
+              <div class="form-text small">
+                <strong>Partecipante:</strong> Può esplorare performance e
+                acquistare biglietti<br />
+                <strong>Organizzatore:</strong> Può creare e gestire performance
+                musicali
+              </div>
+            </div>
+
+            <!-- Bottone di submit che occupa tutta la larghezza -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                <!-- Icona plus per indicare creazione nuovo account -->
+                <i class="fas fa-user-plus me-2"></i>Registrati
+              </button>
+            </div>
+          </form>
+
+          <!-- Footer della card con link al login -->
+          <footer class="text-center mt-4 pt-3 border-top">
+            <p class="mb-0">
+              Hai già un account?
+              <!-- Bottone che apre il modal di login -->
+              <button
+                type="button"
+                class="btn btn-link p-0 text-decoration-none fw-medium align-baseline"
+                data-bs-toggle="modal"
+                data-bs-target="#loginModal"
+              >
+                Accedi qui
+              </button>
+            </p>
+          </footer>
+        </div>
+      </article>
+    </div>
+  </div>
+</main>
+{% endblock %}

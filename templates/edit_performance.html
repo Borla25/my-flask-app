@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+<!-- Personalizza il titolo della pagina ereditando da base.html -->
+{% block title %}Modifica Performance - {{ super() }}{% endblock %}
+
+{% block content %}
+<!-- Contenitore principale della pagina con padding verticale -->
+<div class="container py-4">
+    <!-- Riga centrata con colonna responsive per il form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Card principale che contiene tutto il form di modifica -->
+            <div class="card shadow">
+                <!-- Header della card con titolo e descrizione -->
+                <div class="card-header">
+                    <h1 class="h4 mb-0">
+                        <i class="fas fa-edit me-2"></i>Modifica Performance
+                    </h1>
+                    <!-- Descrizione sotto il titolo -->
+                    <div class="small text-muted mt-1">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Modifica i dati della performance esistente
+                    </div>
+                </div>
+
+                <!-- Corpo della card contenente il form -->
+                <div class="card-body p-4">
+                    <!-- Form che invia dati via POST con supporto per upload file -->
+                    <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        <div class="row">
+                            <!-- Campo Nome Artista/Gruppo (metà larghezza su desktop) -->
+                            <div class="col-md-6 mb-3">
+                                <label for="artist_name" class="form-label fw-semibold">
+                                    Nome Artista/Gruppo <span class="text-danger">*</span>
+                                </label>
+                                <!-- Input text con validazione Bootstrap integrata -->
+                                <input type="text" class="form-control" id="artist_name" name="artist_name"
+                                    pattern="[A-Za-z0-9\s\-&'.]+" minlength="2" maxlength="100"
+                                    value="{{ performance.artist_name }}" required>
+                                <!-- Feedback di validazione Bootstrap -->
+                                <div class="invalid-feedback">
+                                    Il nome deve contenere tra 2 e 100 caratteri (lettere, numeri, spazi, -, &, ', .)
+                                </div>
+                                <!-- Testo di aiuto sotto il campo -->
+                                <div class="form-text small">
+                                    <i class="fas fa-lightbulb me-1"></i>Ogni artista può esibirsi una sola volta nel
+                                    festival
+                                </div>
+                            </div>
+
+                            <!-- Campo Genere Musicale (metà larghezza su desktop) -->
+                            <div class="col-md-6 mb-3">
+                                <label for="genre" class="form-label fw-semibold">
+                                    Genere Musicale <span class="text-danger">*</span>
+                                </label>
+                                <!-- Select dropdown con opzioni predefinite -->
+                                <select class="form-select" id="genre" name="genre" required>
+                                    <option value="" disabled>Seleziona un genere</option>
+                                    <!-- Loop attraverso tutti i generi disponibili -->
+                                    {% for genre in genres %}
+                                    <option value="{{ genre }}" {{ 'selected' if genre==performance.genre }}>{{ genre }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Seleziona un genere musicale
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seconda riga: Programma e durata -->
+                        <div class="row">
+                            <!-- Campo Giorno del Festival (un terzo della larghezza) -->
+                            <div class="col-md-4 mb-3">
+                                <label for="day" class="form-label fw-semibold">
+                                    Giorno <span class="text-danger">*</span>
+                                </label>
+                                <!-- Select con i 3 giorni del festival -->
+                                <select class="form-select" id="day" name="day" required>
+                                    <option value="" disabled>Seleziona giorno</option>
+                                    <option value="2025-07-12" {{ 'selected' if performance.day=='2025-07-12' }}>Venerdì
+                                        12 Luglio</option>
+                                    <option value="2025-07-13" {{ 'selected' if performance.day=='2025-07-13' }}>Sabato
+                                        13 Luglio</option>
+                                    <option value="2025-07-14" {{ 'selected' if performance.day=='2025-07-14' }}>
+                                        Domenica 14 Luglio</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Seleziona un giorno
+                                </div>
+                            </div>
+
+                            <!-- Campo Orario di Inizio (un terzo della larghezza) -->
+                            <div class="col-md-4 mb-3">
+                                <label for="start_time" class="form-label fw-semibold">
+                                    Orario Inizio <span class="text-danger">*</span>
+                                </label>
+                                <!-- Input time picker con range e step -->
+                                <input type="time" class="form-control" id="start_time" name="start_time" min="18:00"
+                                    max="03:00" step="900" value="{{ performance.start_time }}" required>
+                                <div class="invalid-feedback">
+                                    Seleziona un orario valido
+                                </div>
+                            </div>
+
+                            <!-- Campo Durata con validazione -->
+                            <div class="col-md-4 mb-3">
+                                <label for="duration" class="form-label fw-semibold">
+                                    Durata (minuti) <span class="text-danger">*</span>
+                                </label>
+                                <!-- Input numerico con range 30-180 minuti -->
+                                <input type="number" class="form-control" id="duration" name="duration" min="30"
+                                    max="180" value="{{ performance.duration }}" required>
+                                <div class="invalid-feedback">
+                                    La durata deve essere tra 30 e 180 minuti
+                                </div>
+                                <div class="form-text small">
+                                    <i class="fas fa-hourglass-half me-1"></i>Durata tra 30 e 180 minuti
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terza riga: Palco -->
+                        <div class="row">
+                            <!-- Campo Palco (metà larghezza) -->
+                            <div class="col-md-6 mb-3">
+                                <label for="stage" class="form-label fw-semibold">
+                                    Palco <span class="text-danger">*</span>
+                                </label>
+                                <!-- Select dropdown per scegliere il palco -->
+                                <select class="form-select" id="stage" name="stage" required>
+                                    <option value="" disabled>Seleziona un palco</option>
+                                    <!-- Loop attraverso tutti i palchi disponibili dal database -->
+                                    {% for stage in stages %}
+                                    <option value="{{ stage.name }}" {{ 'selected' if stage.name==performance.stage_name
+                                        }}>{{ stage.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Seleziona un palco
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quarta sezione: Descrizione della Performance -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label fw-semibold">
+                                Descrizione Performance <span class="text-danger">*</span>
+                            </label>
+                            <!-- Textarea con validazione -->
+                            <textarea class="form-control" id="description" name="description" rows="4" minlength="50"
+                                maxlength="1000" required
+                                style="min-height: 100px; resize: vertical;">{{ performance.description }}</textarea>
+                            <div class="invalid-feedback">
+                                La descrizione deve essere tra 50 e 1000 caratteri
+                            </div>
+                            <div class="form-text small">
+                                <i class="fas fa-pen me-1"></i>Descrivi la performance, lo stile musicale e cosa
+                                aspettarsi (50-1000 caratteri)
+                            </div>
+                        </div>
+
+                        <!-- Quinta sezione: Upload Immagine Promozionale -->
+                        <div class="mb-4">
+                            <label for="performance_image" class="form-label fw-semibold">
+                                Immagine Promozionale
+                            </label>
+
+                            <!-- Mostra immagine attuale se presente -->
+                            {% if performance.performance_image %}
+                            <div class="mb-3">
+                                <img src="{{ url_for('static', filename='uploads/' + performance.performance_image) }}"
+                                    class="img-thumbnail shadow-sm"
+                                    alt="Immagine attuale della performance {{ performance.artist_name }}"
+                                    style="height: 200px; object-fit: cover; width: 100%;">
+                                <div class="small text-muted mt-1">Immagine attuale</div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Input file per caricare nuova immagine -->
+                            <input type="file" class="form-control" id="performance_image" name="performance_image"
+                                accept="image/jpeg,image/png,image/gif,image/webp">
+                            <div class="form-text small">
+                                <i class="fas fa-image me-1"></i>Lascia vuoto per mantenere l'immagine attuale. Formati
+                                supportati: JPG, PNG, GIF, WebP (max 5MB)
+                            </div>
+                        </div>
+
+                        <!-- Sezione bottoni di azione -->
+                        <div class="d-grid gap-2">
+                            <!-- Bottone principale per salvare le modifiche -->
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Aggiorna Performance
+                            </button>
+                            <!-- Link di ritorno al profilo -->
+                            <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Torna al Profilo
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+<!-- Personalizza il titolo della pagina ereditando da base.html -->
+{% block title %}Pannello Organizzatore - {{ super() }}{% endblock %} {% block
+content %}
+<!-- Contenitore principale della pagina profilo organizzatore -->
+<main class="container py-4">
+  <!-- Layout a due colonne: sidebar + contenuto principale -->
+  <div class="row">
+    <!-- SIDEBAR SINISTRA: Profilo utente e statistiche (1/3 della larghezza) -->
+    <aside class="col-md-4">
+      <!-- Card profilo utente con informazioni personali -->
+      <section class="card profile-card shadow-sm border-0">
+        <div class="card-body text-center p-4">
+          <!-- Placeholder circolare con icona utente -->
+          <div
+            class="profile-avatar-placeholder rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3 shadow-sm"
+            style="width: 120px; height: 120px"
+          >
+            <!-- Icona utente grande come placeholder -->
+            <i class="fas fa-user fa-3x text-muted"></i>
+          </div>
+
+          <!-- Nome completo dell'organizzatore -->
+          <h1 class="h4 fw-semibold mb-2">{{ current_user.full_name }}</h1>
+          <!-- Email dell'organizzatore -->
+          <p class="text-muted mb-3 small">{{ current_user.email }}</p>
+          <!-- Badge che identifica il ruolo di organizzatore -->
+          <span class="badge bg-primary user-role-badge fs-6 px-3 py-2">
+            <i class="fas fa-user-tie me-1"></i>Organizzatore
+          </span>
+        </div>
+      </section>
+
+      <!-- Card statistiche generali del festival -->
+      <section class="card mt-4 shadow-sm border-0">
+        <!-- Header della sezione statistiche -->
+        <header class="card-header">
+          <h2 class="h5 mb-0 fw-semibold">
+            <i class="fas fa-chart-bar me-2 text-primary"></i>Statistiche
+            Festival
+          </h2>
+        </header>
+
+        <!-- Corpo con tutte le statistiche numeriche -->
+        <div class="card-body p-4">
+          <!-- Statistiche principali in evidenza -->
+          <div class="row text-center">
+            <!-- Totale biglietti venduti -->
+            <div class="col-12 mb-4">
+              <div class="statistic-item p-3 bg-light rounded">
+                <h3 class="text-primary h3 fw-bold mb-1">
+                  {{ stats.total_tickets }}
+                </h3>
+                <small class="text-muted fw-medium"
+                  >Biglietti Venduti Totali</small
+                >
+              </div>
+            </div>
+            <!-- Ricavi totali del festival -->
+            <div class="col-12 mb-4">
+              <div class="statistic-item p-3 bg-light rounded">
+                <h3 class="text-success h3 fw-bold mb-1">
+                  €{{ stats.total_revenue }}
+                </h3>
+                <small class="text-muted fw-medium"
+                  >Ricavi Totali Festival</small
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Separatore visivo -->
+          <hr class="my-3" />
+
+          <!-- Sezione breakdown vendite per tipo di biglietto -->
+          <h3 class="h6 fw-semibold mb-3">Vendite per Tipo:</h3>
+          <!-- Lista descrittiva con layout flexbox per allineare numeri -->
+          <dl class="sales-breakdown mb-4">
+            <!-- Biglietti giornalieri venduti -->
+            <div class="d-flex justify-content-between border-bottom py-2">
+              <dt class="fw-semibold small">Giornalieri:</dt>
+              <dd class="mb-0 small text-primary fw-medium">
+                {{ stats.by_type.daily }}
+              </dd>
+            </div>
+            <!-- Pass 2 giorni venduti -->
+            <div class="d-flex justify-content-between border-bottom py-2">
+              <dt class="fw-semibold small">Pass 2 Giorni:</dt>
+              <dd class="mb-0 small text-primary fw-medium">
+                {{ stats.by_type['2days'] }}
+              </dd>
+            </div>
+            <!-- Full pass venduti -->
+            <div class="d-flex justify-content-between py-2">
+              <dt class="fw-semibold small">Full Pass:</dt>
+              <dd class="mb-0 small text-primary fw-medium">
+                {{ stats.by_type.full }}
+              </dd>
+            </div>
+          </dl>
+
+          <!-- Sezione vendite per singolo giorno -->
+          <h3 class="h6 fw-semibold mb-3">Biglietti per Giorno:</h3>
+          <dl class="sales-breakdown mb-4">
+            <!-- Biglietti venduti per venerdì -->
+            <div class="d-flex justify-content-between border-bottom py-2">
+              <dt class="fw-semibold small">Venerdì:</dt>
+              <dd class="mb-0 small text-info fw-medium">
+                {{ stats.by_day.venerdi }}
+              </dd>
+            </div>
+            <!-- Biglietti venduti per sabato -->
+            <div class="d-flex justify-content-between border-bottom py-2">
+              <dt class="fw-semibold small">Sabato:</dt>
+              <dd class="mb-0 small text-info fw-medium">
+                {{ stats.by_day.sabato }}
+              </dd>
+            </div>
+            <!-- Biglietti venduti per domenica -->
+            <div class="d-flex justify-content-between py-2">
+              <dt class="fw-semibold small">Domenica:</dt>
+              <dd class="mb-0 small text-info fw-medium">
+                {{ stats.by_day.domenica }}
+              </dd>
+            </div>
+          </dl>
+
+          <!-- Sezione posti ancora disponibili per giorno -->
+          <h3 class="h6 fw-semibold mb-3">Posti Disponibili:</h3>
+          <dl class="sales-breakdown mb-0">
+            <!-- Posti disponibili venerdì -->
+            <div class="d-flex justify-content-between border-bottom py-2">
+              <dt class="fw-semibold small">Venerdì:</dt>
+              <dd class="mb-0 small text-warning fw-medium">
+                {{ stats.available_tickets.venerdi }}
+              </dd>
+            </div>
+            <!-- Posti disponibili sabato -->
+            <div class="d-flex justify-content-between border-bottom py-2">
+              <dt class="fw-semibold small">Sabato:</dt>
+              <dd class="mb-0 small text-warning fw-medium">
+                {{ stats.available_tickets.sabato }}
+              </dd>
+            </div>
+            <!-- Posti disponibili domenica -->
+            <div class="d-flex justify-content-between py-2">
+              <dt class="fw-semibold small">Domenica:</dt>
+              <dd class="mb-0 small text-warning fw-medium">
+                {{ stats.available_tickets.domenica }}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+    </aside>
+
+    <!-- CONTENUTO PRINCIPALE: Lista performance dell'organizzatore (2/3 della larghezza) -->
+    <section class="col-md-8">
+      <!-- Header della sezione con titolo e bottone di azione -->
+      <header class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Titolo della sezione performance -->
+        <h2 class="h3 fw-semibold mb-0">
+          <i class="fas fa-music me-2 text-primary"></i>Le mie Performance
+        </h2>
+        <!-- Bottone per creare nuova performance -->
+        <a
+          href="{{ url_for('new_performance') }}"
+          class="btn btn-primary shadow-sm px-4"
+        >
+          <i class="fas fa-plus me-2"></i>Nuova Performance
+        </a>
+      </header>
+
+      <!-- Logica condizionale: mostra performance o stato vuoto -->
+      {% if performances %}
+
+      <!-- Container per la lista di performance -->
+      <div class="performances-list">
+        <!-- Loop attraverso tutte le performance dell'organizzatore -->
+        {% for performance in performances %}
+
+        <!-- Card per singola performance con layout orizzontale -->
+        <article class="card mb-4 performance-item shadow-sm border-0">
+          <div class="card-body p-4">
+            <!-- Grid a colonne per organizzare le informazioni -->
+            <div class="row align-items-start">
+              <!-- COLONNA 1: Thumbnail immagine performance (piccola) -->
+              <div class="col-md-2 mb-3 mb-md-0">
+                {% if performance.performance_image %}
+                <!-- Immagine miniatura della performance -->
+                <img
+                  src="{{ url_for('static', filename='uploads/' + performance.performance_image) }}"
+                  class="performance-thumbnail img-fluid rounded shadow-sm"
+                  alt="Immagine di {{ performance.artist_name }}"
+                  style="width: 80px; height: 80px; object-fit: cover"
+                />
+                {% else %}
+                <!-- Placeholder quadrato con icona musicale -->
+                <div
+                  class="performance-thumbnail-placeholder bg-light rounded d-flex align-items-center justify-content-center shadow-sm"
+                  style="width: 80px; height: 80px"
+                >
+                  <i class="fas fa-music fa-2x text-muted"></i>
+                </div>
+                {% endif %}
+              </div>
+
+              <!-- COLONNA 2: Informazioni principali (titolo, descrizione, badge) -->
+              <div class="col-md-6 mb-3 mb-md-0">
+                <!-- Header con nome artista -->
+                <header>
+                  <h3 class="card-title mb-2 h5 fw-semibold">
+                    {{ performance.artist_name }}
+                  </h3>
+                </header>
+                <!-- Descrizione troncata a 100 caratteri -->
+                <p class="card-text small text-muted mb-3">
+                  {{ performance.description[:100] }}...
+                </p>
+                <div class="performance-badges-placeholder mb-3">&nbsp;</div>
+              </div>
+
+              <!-- COLONNA 3: Stato + Azioni in stack verticale -->
+              <div class="col-md-4">
+                <div class="d-flex flex-column align-items-end gap-2">
+                  <!-- Stato pubblicazione (sempre in alto) -->
+                  <div class="mb-2">
+                    {% if performance.published %}
+                    <!-- Badge verde per performance pubblicate -->
+                    <span class="badge bg-success status-badge fs-6 px-3 py-2">
+                      <i class="fas fa-check me-1"></i>Pubblicata
+                    </span>
+                    {% else %}
+                    <!-- Badge giallo per bozze non pubblicate -->
+                    <span class="badge bg-warning status-badge fs-6 px-3 py-2">
+                      <i class="fas fa-edit me-1"></i>Bozza
+                    </span>
+                    {% endif %}
+                  </div>
+
+                  <!-- Bottoni di azione (sempre sotto lo stato) -->
+                  <div class="performance-actions">
+                    <!-- Gruppo di bottoni verticali -->
+                    <div class="btn-group-vertical btn-group-sm d-grid gap-1">
+                      <!-- Bottone sempre visibile: visualizza dettagli -->
+                      <a
+                        href="{{ url_for('performance_detail', id=performance.id) }}"
+                        class="btn btn-outline-primary btn-sm shadow-sm"
+                        title="Visualizza dettagli"
+                      >
+                        <i class="fas fa-eye me-1"></i>Dettagli
+                      </a>
+
+                      <!-- Bottoni condizionali: solo per performance NON pubblicate -->
+                      {% if not performance.published %}
+
+                      <!-- Bottone modifica (solo per bozze) -->
+                      <a
+                        href="{{ url_for('edit_performance', id=performance.id) }}"
+                        class="btn btn-outline-secondary btn-sm shadow-sm"
+                        title="Modifica performance"
+                      >
+                        <i class="fas fa-edit me-1"></i>Modifica
+                      </a>
+
+                      <!-- Form per pubblicare la performance -->
+                      <form
+                        method="POST"
+                        action="{{ url_for('publish_performance_route', performance_id=performance.id) }}"
+                        class="d-inline"
+                      >
+                        <!-- Bottone pubblica con conferma JavaScript -->
+                        <button
+                          type="submit"
+                          class="btn btn-outline-success btn-sm w-100 shadow-sm"
+                          title="Pubblica performance"
+                          onclick="return confirm('Pubblicare questa performance? Non sarà più modificabile.')"
+                        >
+                          <i class="fas fa-share me-1"></i>Pubblica
+                        </button>
+                      </form>
+
+                      <!-- Form per eliminare la performance -->
+                      <form
+                        method="POST"
+                        action="{{ url_for('delete_performance_route', id=performance.id) }}"
+                        style="display: inline-block"
+                        onsubmit="return confirm('Sei sicuro di voler eliminare questa performance?')"
+                      >
+                        <!-- Bottone elimina -->
+                        <button
+                          type="submit"
+                          class="btn btn-danger btn-sm w-100"
+                        >
+                          <i class="fas fa-trash me-1"></i>Elimina
+                        </button>
+                      </form>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+
+      <!-- CASO: Nessuna performance creata (stato vuoto) -->
+      {% else %}
+      <div class="text-center py-5 empty-state">
+        <!-- Icona grande per stato vuoto -->
+        <div class="mb-4">
+          <i class="fas fa-music fa-4x text-muted opacity-50"></i>
+        </div>
+        <!-- Messaggio principale -->
+        <h3 class="h4 fw-semibold mb-3">Non hai ancora creato performance</h3>
+        <!-- Sottotitolo incoraggiante -->
+        <p class="text-muted mb-4 lead">
+          Inizia creando la tua prima performance per il festival!
+        </p>
+        <!-- Call-to-action grande per creare prima performance -->
+        <a
+          href="{{ url_for('new_performance') }}"
+          class="btn btn-primary btn-lg shadow-sm px-4"
+        >
+          <i class="fas fa-plus me-2"></i>Crea Prima Performance
+        </a>
+      </div>
+      {% endif %}
+    </section>
+  </div>
+</main>
+{% endblock %}

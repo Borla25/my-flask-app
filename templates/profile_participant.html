@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+<!-- Personalizza il titolo della pagina ereditando da base.html -->
+{% block title %}Il mio Profilo - {{ super() }}{% endblock %} {% block content
+%}
+<!-- Contenitore principale della pagina profilo partecipante -->
+<main class="container py-4">
+  <!-- Layout a due colonne: sidebar + contenuto principale -->
+  <div class="row">
+    <!-- SIDEBAR SINISTRA: Profilo utente e azioni rapide (1/3 della larghezza) -->
+    <aside class="col-md-4">
+      <!-- Card profilo utente con informazioni personali -->
+      <section class="card profile-card shadow-sm border-0">
+        <div class="card-body text-center p-4">
+          <!-- Sempre icona di default, nessuna immagine profilo per partecipanti -->
+          <div
+            class="profile-avatar-placeholder rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3 shadow-sm"
+            style="width: 120px; height: 120px"
+          >
+            <!-- Icona utente grande come avatar predefinito -->
+            <i class="fas fa-user fa-3x text-muted"></i>
+          </div>
+
+          <!-- Nome completo del partecipante -->
+          <h1 class="h4 fw-semibold mb-2">{{ current_user.full_name }}</h1>
+          <!-- Email del partecipante -->
+          <p class="text-muted mb-3 small">{{ current_user.email }}</p>
+          <!-- Badge verde che identifica il ruolo di partecipante -->
+          <span class="badge bg-success user-role-badge fs-6 px-3 py-2">
+            <i class="fas fa-user me-1"></i>Partecipante
+          </span>
+        </div>
+      </section>
+    </aside>
+
+    <!-- CONTENUTO PRINCIPALE: Biglietti e informazioni festival (2/3 della larghezza) -->
+    <section class="col-md-8">
+      <!-- Card principale per la gestione dei biglietti -->
+      <article class="card shadow-sm border-0">
+        <!-- Header della sezione biglietti -->
+        <header class="card-header">
+          <h2 class="h4 mb-0 fw-semibold">
+            <i class="fas fa-ticket-alt me-2 text-primary"></i>I miei Biglietti
+          </h2>
+        </header>
+
+        <!-- Corpo condizionale: mostra biglietti o stato vuoto -->
+        <div class="card-body p-4">
+          <!-- CASO 1: L'utente ha almeno un biglietto -->
+          {% if tickets %}
+
+          <!-- Container per la lista di biglietti -->
+          <div class="tickets-list">
+            <!-- Loop attraverso tutti i biglietti del partecipante -->
+            {% for ticket in tickets %}
+
+            <!-- Card per singolo biglietto con layout orizzontale -->
+            <article class="card mb-3 ticket-item border-0 shadow-sm">
+              <div class="card-body p-4">
+                <!-- Grid a 2 colonne: info biglietto + prezzo/stato -->
+                <div class="row align-items-center">
+                  <!-- COLONNA SINISTRA: Informazioni del biglietto -->
+                  <div class="col-md-8">
+                    <!-- Header con tipo di biglietto -->
+                    <header>
+                      <h3 class="card-title mb-2 h5 fw-semibold">
+                        <!-- Logica condizionale per il nome del tipo biglietto -->
+                        {% if ticket.ticket_type == 'daily' %}Biglietto
+                        Giornaliero {% elif ticket.ticket_type == '2days' %}Pass
+                        2 Giorni {% else %}Full Pass{% endif %}
+                      </h3>
+                    </header>
+
+                    <!-- Lista descrittiva con informazioni del biglietto -->
+                    <dl class="card-text mb-3">
+                      <!-- Giorni inclusi nel biglietto -->
+                      <div class="mb-2">
+                        <dt class="fw-semibold small d-inline">
+                          Giorni inclusi:
+                        </dt>
+                        <dd class="d-inline small">
+                          <!-- Logica per Full Pass (include tutti i giorni) -->
+                          {% if ticket.ticket_type == 'full' %} Venerdì 12,
+                          Sabato 13, Domenica 14 Luglio {% else %}
+                          <!-- Loop attraverso i giorni specifici selezionati -->
+                          {% for day in ticket.days.split(',') %}
+                          <!-- Conversione codici giorni in nomi completi -->
+                          {% if day.strip() == 'venerdi' %}Venerdì 12 Luglio {%
+                          elif day.strip() == 'sabato' %}Sabato 13 Luglio {%
+                          elif day.strip() == 'domenica' %}Domenica 14 Luglio {%
+                          else %}{{ day }}{% endif %}
+                          <!-- Virgola se non è l'ultimo elemento -->
+                          {% if not loop.last %}, {% endif %} {% endfor %} {%
+                          endif %}
+                        </dd>
+                      </div>
+                    </dl>
+
+                    <!-- Footer con data di acquisto -->
+                    <footer>
+                      <small class="text-muted">
+                        <i class="fas fa-calendar me-1"></i>
+                        Acquistato il
+                        <!-- Tag time con datetime per semantica -->
+                        <time datetime="{{ ticket.purchase_date }}"
+                          >{{ ticket.purchase_date }}</time
+                        >
+                      </small>
+                    </footer>
+                  </div>
+
+                  <!-- COLONNA DESTRA: Prezzo e stato del biglietto -->
+                  <div class="col-md-4 text-end ticket-price-section">
+                    <!-- Prezzo in evidenza -->
+                    <h4 class="text-primary ticket-price h3 fw-bold mb-2">
+                      €{{ ticket.price }}
+                    </h4>
+                  </div>
+                </div>
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+
+          <!-- CASO 2: L'utente non ha ancora biglietti (stato vuoto) -->
+          {% else %}
+          <div class="text-center py-5 empty-state">
+            <!-- Icona grande per stato vuoto -->
+            <div class="mb-4">
+              <i class="fas fa-ticket-alt fa-4x text-muted opacity-50"></i>
+            </div>
+            <!-- Messaggio principale -->
+            <h3 class="h4 fw-semibold mb-3">
+              Non hai ancora acquistato biglietti
+            </h3>
+            <!-- Sottotitolo incoraggiante -->
+            <p class="text-muted mb-4 lead">
+              Acquista il tuo biglietto per partecipare al Madness Festival!
+            </p>
+            <!-- Call-to-action grande per acquistare primo biglietto -->
+            <a
+              href="{{ url_for('buy_ticket') }}"
+              class="btn btn-primary btn-lg shadow-sm px-4"
+            >
+              <i class="fas fa-shopping-cart me-2"></i>Acquista Biglietto
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </article>
+    </section>
+  </div>
+</main>
+{% endblock %}

@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+<!-- Personalizza il titolo della pagina ereditando da base.html -->
+{% block title %}Nuova Performance - {{ super() }}{% endblock %}
+
+{% block content %}
+<!-- Contenitore principale della pagina con padding verticale -->
+<div class="container py-4">
+  <!-- Riga centrata con colonna responsive per il form -->
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Card principale che contiene tutto il form di creazione -->
+      <div class="card shadow">
+        <!-- Header della card con titolo e icona -->
+        <div class="card-header">
+          <h1 class="h4 mb-0">
+            <!-- Icona Font Awesome per aggiunta nuova performance -->
+            <i class="fas fa-plus me-2"></i>Crea Nuova Performance
+          </h1>
+          <!-- Breadcrumb informativo per guidare l'utente -->
+          <div class="small text-muted mt-1">
+            <i class="fas fa-info-circle me-1"></i>
+            Compila tutti i campi per creare una nuova performance
+          </div>
+        </div>
+
+        <!-- Corpo della card contenente il form -->
+        <div class="card-body p-4">
+          <!-- Form che invia dati via POST con supporto per upload file -->
+          <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <div class="row">
+              <!-- Campo Nome Artista/Gruppo (metà larghezza su desktop) -->
+              <div class="col-md-6 mb-3">
+                <label for="artist_name" class="form-label fw-semibold">
+                  Nome Artista/Gruppo <span class="text-danger">*</span>
+                </label>
+                <!--
+                    Input text con validazione Bootstrap integrata
+                    Pattern regex per caratteri consentiti
+                  -->
+                <input type="text" class="form-control" id="artist_name" name="artist_name"
+                  pattern="[A-Za-z0-9\s\-&'.]+" minlength="2" maxlength="100" required>
+                <!-- Feedback di validazione Bootstrap -->
+                <div class="invalid-feedback">
+                  Il nome deve contenere tra 2 e 100 caratteri (lettere, numeri, spazi, -, &, ', .)
+                </div>
+                <!-- Testo di aiuto sotto il campo -->
+                <div class="form-text small">
+                  <i class="fas fa-lightbulb me-1"></i>Ogni artista può esibirsi una sola volta nel festival
+                </div>
+              </div>
+
+              <!-- Campo Genere Musicale (metà larghezza su desktop) -->
+              <div class="col-md-6 mb-3">
+                <label for="genre" class="form-label fw-semibold">
+                  Genere Musicale <span class="text-danger">*</span>
+                </label>
+                <!--
+                    Select dropdown con opzioni dinamiche dal database
+                    Loop ottimizzato per evitare duplicazione di codice
+                  -->
+                <select class="form-select" id="genre" name="genre" required>
+                  <option value="">-- Seleziona Genere --</option>
+                  <!-- Loop attraverso tutti i generi disponibili dal database -->
+                  {% for genre in genres %}
+                  <option value="{{ genre }}">{{ genre }}</option>
+                  {% endfor %}
+                </select>
+                <div class="invalid-feedback">
+                  Seleziona un genere musicale valido
+                </div>
+              </div>
+            </div>
+            </fieldset>
+
+            <div class="row">
+              <!--
+                  Campo Giorno del Festival
+                  Date CORRETTE per il 2025
+                -->
+              <div class="col-md-4 mb-3">
+                <label for="day" class="form-label fw-semibold">
+                  Giorno Festival <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="day" name="day" required>
+                  <option value="">-- Seleziona Giorno --</option>
+                  <!--
+                      Date AGGIORNATE per il 2025
+                      Array ottimizzato per evitare hardcoding ripetuto
+                    -->
+                  {% set festival_days = [
+                  ('2025-07-12', 'Venerdì 12 Luglio 2025'),
+                  ('2025-07-13', 'Sabato 13 Luglio 2025'),
+                  ('2025-07-14', 'Domenica 14 Luglio 2025')
+                  ] %}
+
+                  {% for day_value, day_label in festival_days %}
+                  <option value="{{ day_value }}">{{ day_label }}</option>
+                  {% endfor %}
+                </select>
+                <div class="invalid-feedback">
+                  Seleziona un giorno valido del festival
+                </div>
+              </div>
+
+              <!-- Campo Orario di Inizio SENZA validazione range -->
+              <div class="col-md-4 mb-3">
+                <label for="start_time" class="form-label fw-semibold">
+                  Orario Inizio <span class="text-danger">*</span>
+                </label>
+                <!--
+                    Input time SENZA min/max - controlli rimossi
+                    Nessuna limitazione sugli orari
+                  -->
+                <input type="time" class="form-control" id="start_time" name="start_time" required>
+                <div class="invalid-feedback">
+                  Inserisci un orario valido
+                </div>
+                <div class="form-text small">
+                  <i class="fas fa-clock me-1"></i>Inserisci l'orario di inizio della performance
+                </div>
+              </div>
+
+              <!-- Campo Durata con validazione semplificata -->
+              <div class="col-md-4 mb-3">
+                <label for="duration" class="form-label fw-semibold">
+                  Durata (minuti) <span class="text-danger">*</span>
+                </label>
+                <!--
+                    Input numerico con range 30-180 minuti
+                    Validazione per performance realistiche
+                  -->
+                <input type="number" class="form-control" id="duration" name="duration" min="30" max="180" required>
+                <div class="invalid-feedback">
+                  La durata deve essere tra 30 e 180 minuti
+                </div>
+                <div class="form-text small">
+                  <i class="fas fa-hourglass-half me-1"></i>Durata tra 30 e 180 minuti
+                </div>
+              </div>
+            </div>
+            </fieldset>
+
+            <div class="row">
+              <!-- Campo Palco (metà larghezza) -->
+              <div class="col-md-6 mb-3">
+                <label for="stage" class="form-label fw-semibold">
+                  Palco <span class="text-danger">*</span>
+                </label>
+                <!--
+                    Select dropdown per palchi dal database
+                    Gestione caso in cui non ci sono palchi disponibili
+                  -->
+                <select class="form-select" id="stage" name="stage" required>
+                  <option value="">-- Seleziona Palco --</option>
+                  {% if stages %}
+                  {% for stage in stages %}
+                  <option value="{{ stage.name }}">
+                    {{ stage.name }}
+                    {% if stage.capacity %} ({{ stage.capacity }} posti){% endif %}
+                  </option>
+                  {% endfor %}
+                  {% else %}
+                  <option value="" disabled>Nessun palco disponibile</option>
+                  {% endif %}
+                </select>
+                <div class="invalid-feedback">
+                  Seleziona un palco valido
+                </div>
+              </div>
+            </div>
+
+            <!-- Campo Descrizione a tutta larghezza -->
+            <div class="mb-3">
+              <label for="description" class="form-label fw-semibold">
+                Descrizione Performance <span class="text-danger">*</span>
+              </label>
+              <!--
+                  Textarea con validazione lunghezza
+                  Resize solo verticale per UI consistente
+                -->
+              <textarea class="form-control" id="description" name="description" rows="4" minlength="10" maxlength="500"
+                placeholder="Descrivi l'artista, lo stile musicale, cosa aspettarsi dalla performance..."
+                style="min-height: 100px; resize: vertical;" required></textarea>
+              <div class="invalid-feedback">
+                La descrizione deve contenere tra 10 e 500 caratteri
+                <div class="form-text small">
+                  <i class="fas fa-pen me-1"></i>Descrivi la performance, lo stile musicale e cosa aspettarsi (50-1000
+                  caratteri)
+                </div>
+              </div>
+              </fieldset>
+
+              <!-- ===== SEZIONE 4: IMMAGINE PROMOZIONALE ===== -->
+              <fieldset class="mb-4">
+                <legend class="h5 mb-3 border-bottom pb-2">
+                  <i class="fas fa-image me-2 text-primary"></i>Immagine Promozionale
+                </legend>
+
+                <!-- Campo upload immagine -->
+                <div class="mb-3">
+                  <label for="performance_image" class="form-label fw-semibold">
+                    Carica Immagine <span class="text-muted">(opzionale)</span>
+                  </label>
+                  <!--
+                  Input file con accept limitato ai formati immagine supportati
+                  Non required perché opzionale
+                -->
+                  <input type="file" class="form-control" id="performance_image" name="performance_image"
+                    accept="image/jpeg,image/png,image/gif,image/webp">
+                  <!-- Testo di aiuto con specifiche tecniche -->
+                  <div class="form-text small">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <i class="fas fa-check-circle text-success me-1"></i>
+                        <strong>Formati:</strong> JPG, PNG, GIF, WebP
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- ===== SEZIONE 6: AZIONI FINALI ===== -->
+              <div class="border-top pt-4">
+                <!-- Griglia bottoni responsive -->
+                <div class="row">
+                  <div class="col-md-8">
+                    <!-- Bottone principale per creare la performance -->
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-2">
+                      <i class="fas fa-save me-2"></i>Crea Performance
+                    </button>
+                  </div>
+                  <div class="col-md-4">
+                    <!-- Link di ritorno al profilo -->
+                    <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary w-100">
+                      <i class="fas fa-arrow-left me-2"></i>Torna al Profilo
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

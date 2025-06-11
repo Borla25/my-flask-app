@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+<!-- Personalizza il titolo della pagina con nome artista -->
+{% block title %}{{ performance.artist_name }} - {{ super() }}{% endblock %} {%
+block content %} {% set stage_names = { 1: 'Main Stage', 2: 'Secondary Stage',
+3: 'Experimental Stage', } %}
+
+<!-- Contenitore principale della pagina di dettaglio -->
+<main class="container py-4">
+  <!-- Layout a due colonne: contenuto principale e sidebar -->
+  <div class="row">
+    <!-- Colonna principale con dettagli della performance (2/3 della larghezza su desktop) -->
+    <div class="col-lg-8">
+      <!-- Card principale contenente tutte le informazioni della performance -->
+      <article class="card shadow-sm border-0">
+        <!-- Sezione immagine: condizionale basata sulla presenza di un'immagine -->
+        {% if performance.performance_image %}
+        <!-- Immagine caricata dall'organizzatore con dimensioni fisse -->
+        <img
+          src="{{ url_for('static', filename='uploads/' + performance.performance_image) }}"
+          class="card-img-top performance-detail-image rounded"
+          alt="Immagine promozionale di {{ performance.artist_name }}"
+          style="height: 300px; object-fit: cover"
+        />
+        {% else %}
+        <!-- Placeholder con icona musicale se non c'è immagine -->
+        <div
+          class="card-img-top bg-light d-flex align-items-center justify-content-center performance-detail-placeholder rounded"
+          style="height: 300px"
+        >
+          <!-- Icona musicale grande come placeholder -->
+          <i class="fas fa-music fa-4x text-muted"></i>
+        </div>
+        {% endif %}
+
+        <!-- Corpo della card con tutte le informazioni testuali -->
+        <div class="card-body p-4">
+          <!-- Header della performance con nome e badge informativi -->
+          <header class="mb-4">
+            <!-- Nome dell'artista come titolo principale -->
+            <h1 class="card-title h2 fw-bold mb-3">
+              {{ performance.artist_name }}
+            </h1>
+          </header>
+
+          <!-- Sezione descrizione della performance -->
+          <section class="mb-4">
+            <!-- Descrizione con stile lead per maggiore leggibilità -->
+            <p class="card-text lead">{{ performance.description }}</p>
+          </section>
+
+          <!-- Sezione informazioni strutturate in due colonne -->
+          <div class="row mt-4">
+            <!-- Colonna sinistra: Informazioni tecniche della performance -->
+            <div class="col-md-6 mb-4">
+              <section class="bg-light p-3 rounded">
+                <!-- Titolo della sezione con icona -->
+                <h2 class="h5 fw-semibold mb-3">
+                  <i class="fas fa-calendar me-2 text-primary"></i>Informazioni
+                  Performance
+                </h2>
+                <!-- Lista descrittiva con layout Bootstrap a due colonne -->
+                <dl class="row mb-0">
+                  <!-- Giorno completo con logica condizionale -->
+                  <dt class="col-sm-4 fw-semibold small">Giorno:</dt>
+                  <dd class="col-sm-8 small">
+                    {% if performance.day == '2025-07-12' %}Venerdì 12 Luglio
+                    2025{% elif performance.day == '2025-07-13' %}Sabato 13
+                    Luglio 2025{% else %}Domenica 14 Luglio 2025{% endif %}
+                  </dd>
+
+                  <!-- Orario di inizio -->
+                  <dt class="col-sm-4 fw-semibold small">Orario:</dt>
+                  <dd class="col-sm-8 small">{{ performance.start_time }}</dd>
+
+                  <!-- Durata in minuti -->
+                  <dt class="col-sm-4 fw-semibold small">Durata:</dt>
+                  <dd class="col-sm-8 small">
+                    {{ performance.duration }} minuti
+                  </dd>
+
+                  <!-- Palco assegnato - CORRETTO -->
+                  <dt class="col-sm-4 fw-semibold small">Palco:</dt>
+                  <dd class="col-sm-8 small">
+                    {{ stage_names.get(performance.stage_id, 'Palco
+                    Sconosciuto') }}
+                  </dd>
+
+                  <!-- Genere musicale -->
+                  <dt class="col-sm-4 fw-semibold small">Genere:</dt>
+                  <dd class="col-sm-8 small">{{ performance.genre }}</dd>
+                </dl>
+              </section>
+            </div>
+
+            <!-- Colonna destra: Informazioni organizzatore e stato pubblicazione -->
+            <div class="col-md-6 mb-4">
+              <section class="bg-light p-3 rounded">
+                <!-- Titolo della sezione organizzatore -->
+                <h2 class="h5 fw-semibold mb-3">
+                  <i class="fas fa-user me-2 text-primary"></i>Organizzatore
+                </h2>
+                <!-- Nome dell'organizzatore che ha creato la performance -->
+                <p class="mb-2">{{ performance.organizer_name }}</p>
+
+                <!-- Alert condizionale per performance non pubblicate -->
+                {% if not performance.published %}
+                <div class="alert alert-warning border-0 shadow-sm">
+                  <i class="fas fa-eye-slash me-2"></i>
+                  <strong>Anteprima:</strong> Questa performance non è ancora
+                  pubblicata
+                </div>
+                {% endif %}
+              </section>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Sidebar destra con informazioni sui biglietti e festival (1/3 della larghezza) -->
+    <aside class="col-lg-4">
+      <!-- Card per la gestione biglietti -->
+      <section class="card shadow-sm border-0 mb-4">
+        <!-- Header della sezione biglietti -->
+        <header class="card-header">
+          <h2 class="h5 mb-0 fw-semibold">
+            <i class="fas fa-ticket-alt me-2"></i>Biglietti
+          </h2>
+        </header>
+
+        <!-- Corpo della card con logica condizionale basata su autenticazione e tipo utente -->
+        <div class="card-body p-4">
+          <!-- CASO 1: Utente autenticato come PARTECIPANTE -->
+          {% if current_user.is_authenticated and current_user.user_type ==
+          'participant' %}
+          <!-- Messaggio informativo sui biglietti -->
+          <p class="text-muted mb-3">
+            Per partecipare a questa performance, acquista uno dei nostri
+            biglietti:
+          </p>
+          <!-- Bottone per andare alla pagina di acquisto biglietti -->
+          <a
+            href="{{ url_for('buy_ticket') }}"
+            class="btn btn-primary w-100 mb-2 shadow-sm"
+          >
+            <i class="fas fa-shopping-cart me-2"></i>Acquista Biglietto
+          </a>
+
+          <!-- CASO 2: Utente autenticato come ORGANIZZATORE -->
+          {% elif current_user.is_authenticated and current_user.user_type ==
+          'organizer' %}
+          <!-- Messaggio informativo per organizzatori (non possono comprare biglietti) -->
+          <div class="text-center py-3">
+            <i class="fas fa-users fa-2x text-muted mb-2"></i>
+            <p class="text-muted mb-0 small">
+              Gli organizzatori non possono acquistare biglietti
+            </p>
+          </div>
+
+          <!-- CASO 3: Utente NON autenticato -->
+          {% else %}
+          <!-- Messaggio che incoraggia registrazione/login -->
+          <p class="text-muted mb-3">
+            Accedi o registrati per acquistare biglietti
+          </p>
+          <!-- Bottone che apre il modal di login -->
+          <button
+            class="btn btn-primary w-100 mb-2 shadow-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#loginModal"
+          >
+            <i class="fas fa-sign-in-alt me-2"></i>Accedi
+          </button>
+          <!-- Link alla pagina di registrazione -->
+          <a
+            href="{{ url_for('register') }}"
+            class="btn btn-outline-primary w-100"
+          >
+            <i class="fas fa-user-plus me-2"></i>Registrati
+          </a>
+          {% endif %}
+        </div>
+      </section>
+
+      <!-- Card con informazioni generali del festival -->
+      <section class="card shadow-sm border-0">
+        <!-- Header della sezione info festival -->
+        <header class="card-header">
+          <h2 class="h5 mb-0 fw-semibold">
+            <i class="fas fa-info-circle me-2"></i>Info Festival
+          </h2>
+        </header>
+
+        <!-- Corpo con dettagli del festival -->
+        <div class="card-body p-4">
+          <!-- Nome del festival con anno -->
+          <h3 class="h6 fw-semibold mb-2">{{ festival_name }}</h3>
+
+          <!-- Indirizzo e date del festival usando tag semantici -->
+          <address class="small text-muted mb-3">
+            <!-- Ubicazione con icona -->
+            <i class="fas fa-map-marker-alt me-1"></i>
+            {{ festival_location }}<br />
+            <!-- Date con icona e tag time per semantica -->
+            <i class="fas fa-calendar me-1"></i>
+            <time datetime="2025-07-12/2025-07-14">12-14 Luglio 2025</time>
+          </address>
+
+          <!-- Sezione prezzi biglietti -->
+          <h3 class="h6 fw-semibold mb-2">Tipi di Biglietto:</h3>
+          <!-- Lista descrittiva con layout flexbox per allineare prezzi -->
+          <dl class="small ticket-prices mb-0">
+            <!-- Biglietto giornaliero -->
+            <div class="d-flex justify-content-between border-bottom py-1">
+              <dt class="fw-semibold">Giornaliero:</dt>
+              <dd class="mb-0">€50</dd>
+            </div>
+            <!-- Pass 2 giorni -->
+            <div class="d-flex justify-content-between border-bottom py-1">
+              <dt class="fw-semibold">Pass 2 Giorni:</dt>
+              <dd class="mb-0">€90</dd>
+            </div>
+            <!-- Full pass -->
+            <div class="d-flex justify-content-between py-1">
+              <dt class="fw-semibold">Full Pass:</dt>
+              <dd class="mb-0">€130</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- Sezione navigazione per tornare alla homepage -->
+  <nav class="row mt-4">
+    <div class="col-12">
+      <!-- Bottone di ritorno alla homepage -->
+      <a href="{{ url_for('home') }}" class="btn btn-secondary shadow-sm">
+        <i class="fas fa-arrow-left me-2"></i>Torna alla Homepage
+      </a>
+    </div>
+  </nav>
+</main>
+{% endblock %}
