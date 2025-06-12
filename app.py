@@ -576,7 +576,7 @@ def delete_performance_route(id):
 def my_performances():
     if current_user.user_type != 'organizer':
         abort(403)
-    performances = performances_dao.get_by_organizer(current_user.id)
+    performances = performances_dao.get_organizer_performances(current_user.id)
     return render_template("my_performances.html", performances=performances)
 
 @login_manager.user_loader
