@@ -62,47 +62,33 @@ def require_organizer():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def save_image(file, prefix, max_width=None, min_height=None, max_height=None):
-    """Elabora immagine caricata con validazione e compressione WebP"""
+def save_image(file, prefix):
+    """Salva l'immagine ridimensionandola/tagliandola a 600px di altezza se necessario."""
     if file and allowed_file(file.filename):
+        from PIL import Image
+        import os
         filename = file.filename
         timestamp = int(datetime.now().timestamp())
         new_filename = f"{prefix}_{timestamp}.webp"
-        
         img = Image.open(file)
-        
-        # Validazione dimensioni immagine
-        if min_height and img.height < min_height:
-            return None, f"L'immagine deve essere alta almeno {min_height}px (attuale: {img.height}px)"
-        
-        if max_height and img.height > max_height:
-            return None, f"L'immagine non può essere più alta di {max_height}px (attuale: {img.height}px)"
-        
-        # Controllo proporzioni - previene immagini troppo strette
-        aspect_ratio = img.width / img.height
-        if aspect_ratio < 0.8:
-            return None, f"L'immagine è troppo stretta (proporzioni {aspect_ratio:.2f}). Usa un formato più panoramico."
-        
-        # Ridimensiona per ottimizzazione web
-        if max_width and img.width > max_width:
-            ratio = max_width / img.width
-            new_height = int(img.height * ratio)
-            
-            # Valida dimensioni post-ridimensionamento
-            if min_height and new_height < min_height:
-                return None, f"Dopo il ridimensionamento l'immagine sarebbe troppo bassa ({new_height}px < {min_height}px)"
-            
-            if max_height and new_height > max_height:
-                return None, f"Dopo il ridimensionamento l'immagine sarebbe troppo alta ({new_height}px > {max_height}px)"
-            
-            img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
-        
-        # Salva come WebP con compressione
-        filepath = f"{app.config['UPLOAD_FOLDER']}/{new_filename}"
+
+        # Controlla altezza minima
+        if img.height < 600:
+            return None, "L'immagine deve essere alta almeno 600px"
+
+        # Se più alta di 600px, taglia (crop) centralmente
+        if img.height > 600:
+            left = 0
+            upper = (img.height - 600) // 2
+            right = img.width
+            lower = upper + 600
+            img = img.crop((left, upper, right, lower))
+
+        # Salva come WebP
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
         img.save(filepath, "WebP", quality=60, optimize=True)
-        
         return new_filename, None
-    
+
     return None, "File non valido"
 
 @app.route("/")
@@ -429,8 +415,7 @@ def new_performance_post():
         flash("L'immagine promozionale è obbligatoria", "danger")
         return redirect(url_for("new_performance"))
     
-    result = save_image(performance_image, f"perf_{form_data['artist_name']}", 
-                   PERFORMANCE_IMG_WIDTH, min_height=600)
+    result = save_image(performance_image, f"perf_{form_data['artist_name']}")
 
     if isinstance(result, tuple):
         image_filename, error_message = result
