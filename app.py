@@ -94,7 +94,7 @@ def save_image(file, prefix):
         img = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
 
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
-        img.save(filepath, "WebP", quality=50, optimize=True)
+        img.save(filepath, "WebP", quality=40, optimize=True)
         return new_filename, None
 
     return None, "File non valido"
