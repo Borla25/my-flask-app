@@ -171,16 +171,3 @@ label .disabled-ticket:hover {
 .badge-container .badge {
   margin: 0.25rem;
 }
-
-
-/* ===== PLACEHOLDER PERFORMANCE (AGGIUNGI ALLA FINE) ===== */
-/* Il placeholder deve avere la stessa altezza delle immagini reali */
-.performance-placeholder {
-  min-height: 250px;
-  /* Adatta questa altezza alle tue immagini esistenti */
-  position: relative;
-}
-
-.performance-placeholder i {
-  transition: opacity 0.3s ease;
-}

@@ -391,7 +391,6 @@ def new_performance_post():
     auth_check = require_organizer()
     if auth_check: return auth_check
     
-    """Crea nuova performance con controllo conflitti"""
     form_data = request.form.to_dict()
     
     if form_data.get('day') in DATE_TO_DAY:
@@ -424,22 +423,23 @@ def new_performance_post():
         flash("Questo artista ha già una performance programmata", "danger")
         return redirect(url_for("new_performance"))
     
-    # Gestisce upload immagine con validazione
+    # IMMAGINE OBBLIGATORIA
     performance_image = request.files.get('performance_image')
-    if performance_image:
-        result = save_image(performance_image, f"perf_{form_data['artist_name']}", 
-                       PERFORMANCE_IMG_WIDTH, min_height=600)
+    if not performance_image or performance_image.filename == '':
+        flash("L'immagine promozionale è obbligatoria", "danger")
+        return redirect(url_for("new_performance"))
     
-        if isinstance(result, tuple):
-            image_filename, error_message = result
-            if error_message:
-                flash(f"Errore immagine: {error_message}", "danger")
-                return redirect(url_for("new_performance"))
-            form_data['performance_image'] = image_filename
-        else:
-            form_data['performance_image'] = result  
+    result = save_image(performance_image, f"perf_{form_data['artist_name']}", 
+                   PERFORMANCE_IMG_WIDTH, min_height=600)
+
+    if isinstance(result, tuple):
+        image_filename, error_message = result
+        if error_message:
+            flash(f"Errore immagine: {error_message}", "danger")
+            return redirect(url_for("new_performance"))
+        form_data['performance_image'] = image_filename
     else:
-        form_data['performance_image'] = None
+        form_data['performance_image'] = result  
     
     # Imposta campi aggiuntivi
     form_data['organizer_id'] = current_user.id
@@ -533,13 +533,18 @@ def edit_performance_post(id):
 @app.route('/publish_performance/<int:performance_id>', methods=['POST'])
 @login_required
 def publish_performance_route(performance_id):
-    """Pubblica performance - la rende visibile al pubblico"""
+    """Pubblica performance - RICHIEDE IMMAGINE OBBLIGATORIA"""
     auth_check = require_organizer()
     if auth_check: return auth_check
     
     performance = performances_dao.get_performance(performance_id)  
     if not performance or performance['organizer_id'] != current_user.id:
         flash('Performance non trovata o non autorizzato.', 'error')
+        return redirect(url_for('profile'))
+    
+    # CONTROLLO OBBLIGATORIO: Performance deve avere immagine
+    if not performance['performance_image']:
+        flash(f'Impossibile pubblicare "{performance["artist_name"]}": devi caricare un\'immagine promozionale prima della pubblicazione.', 'warning')
         return redirect(url_for('profile'))
     
     if performances_dao.publish_performance(performance_id):  

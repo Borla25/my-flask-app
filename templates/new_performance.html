@@ -171,50 +171,36 @@
               </fieldset>
 
               <!-- ===== SEZIONE 4: IMMAGINE PROMOZIONALE ===== -->
-              <fieldset class="mb-4">
-                <legend class="h5 mb-3 border-bottom pb-2">
-                  <i class="fas fa-image me-2 text-primary"></i>Immagine Promozionale
-                </legend>
-
-                <!-- Campo upload immagine -->
-                <div class="mb-3">
-                  <label for="performance_image" class="form-label fw-semibold">
-                    Carica Immagine <span class="text-muted">(opzionale)</span>
-                  </label>
-                  <input type="file" class="form-control" id="performance_image" name="performance_image"
-                    accept="image/jpeg,image/png,image/gif,image/webp">
-                  <!-- Specifiche tecniche con altezza minima -->
-                  <div class="form-text small">
-                    <div class="row">
-                      <div class="col-md-6">
-                        <i class="fas fa-check-circle text-success me-1"></i>
-                        <strong>Formati:</strong> JPG, PNG, GIF, WebP
-                      </div>
-                      <div class="col-md-6">
-                        <i class="fas fa-ruler text-info me-1"></i>
-                        <strong>Dimensioni:</strong> 400-800px altezza
-                      </div>
+              <div class="mb-4">
+                <label for="performance_image" class="form-label fw-semibold">
+                  Immagine Promozionale <span class="text-danger">*</span>
+                </label>
+                <!-- Input file OBBLIGATORIO -->
+                <input type="file" class="form-control" id="performance_image" name="performance_image"
+                  accept="image/jpeg,image/png,image/gif,image/webp" required>
+                <div class="invalid-feedback">
+                  L'immagine promozionale è obbligatoria
+                </div>
+                <!-- Testo di aiuto -->
+                <div class="form-text small">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <i class="fas fa-check-circle text-success me-1"></i>
+                      <strong>Formati:</strong> JPG, PNG, GIF, WebP
                     </div>
-                    <div class="row mt-1">
-                      <div class="col-md-6">
-                        <i class="fas fa-expand-arrows-alt text-primary me-1"></i>
-                        <strong>Proporzioni:</strong> Formato panoramico
-                      </div>
-                      <div class="col-md-6">
-                        <i class="fas fa-lightbulb text-warning me-1"></i>
-                        <strong>Qualità:</strong> HD consigliata
-                      </div>
+                    <div class="col-md-6">
+                      <i class="fas fa-ruler text-info me-1"></i>
+                      <strong>Dimensioni:</strong> Minimo 600px altezza
                     </div>
-                    <div class="mt-1">
-                      {% if 'edit' not in request.endpoint %}
-                      <small class="text-muted">💡 Evita immagini troppo strette o troppo lunghe</small>
-                      {% else %}
-                      <small class="text-muted">💡 Lascia vuoto per mantenere l'immagine attuale</small>
-                      {% endif %}
+                  </div>
+                  <div class="row mt-1">
+                    <div class="col-md-12">
+                      <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                      <strong>Obbligatoria per pubblicazione:</strong> Ogni performance deve avere un'immagine promozionale
                     </div>
                   </div>
                 </div>
-              </fieldset>
+              </div>
 
               <!-- ===== SEZIONE 6: AZIONI FINALI ===== -->
               <div class="border-top pt-4">
