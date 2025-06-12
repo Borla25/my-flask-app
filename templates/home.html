@@ -83,9 +83,9 @@
                     <!-- Immagine o placeholder -->
                     {% if performance.performance_image %}
                     <img src="{{ url_for('static', filename='uploads/' + performance.performance_image) }}"
-                        class="card-img-top" alt="{{ performance.artist_name }}" loading="lazy">
+                        class="card-img-top performance-image" alt="{{ performance.artist_name }}" loading="lazy">
                     {% else %}
-                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                    <div class="card-img-top performance-placeholder bg-light d-flex align-items-center justify-content-center">
                         <i class="fas fa-music fa-3x text-muted"></i>
                     </div>
                     {% endif %}
