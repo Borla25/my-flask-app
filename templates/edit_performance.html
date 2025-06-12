@@ -11,12 +11,10 @@
         <div class="col-lg-8">
             <!-- Card principale che contiene tutto il form di modifica -->
             <div class="card shadow">
-                <!-- Header della card con titolo e descrizione -->
                 <div class="card-header">
                     <h1 class="h4 mb-0">
                         <i class="fas fa-edit me-2"></i>Modifica Performance
                     </h1>
-                    <!-- Descrizione sotto il titolo -->
                     <div class="small text-muted mt-1">
                         <i class="fas fa-info-circle me-1"></i>
                         Modifica i dati della performance esistente
@@ -28,16 +26,16 @@
                     <!-- Form che invia dati via POST con supporto per upload file -->
                     <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                         <div class="row">
-                            <!-- Campo Nome Artista/Gruppo (metà larghezza su desktop) -->
+                            <!-- Campo Nome Artista -->
                             <div class="col-md-6 mb-3">
                                 <label for="artist_name" class="form-label fw-semibold">
                                     Nome Artista/Gruppo <span class="text-danger">*</span>
                                 </label>
-                                <!-- Input text con validazione Bootstrap integrata -->
+                                <!-- Input text con validazione -->
                                 <input type="text" class="form-control" id="artist_name" name="artist_name"
                                     pattern="[A-Za-z0-9\s\-&'.]+" minlength="2" maxlength="100"
                                     value="{{ performance.artist_name }}" required>
-                                <!-- Feedback di validazione Bootstrap -->
+                                <!-- Feedback di validazione -->
                                 <div class="invalid-feedback">
                                     Il nome deve contenere tra 2 e 100 caratteri (lettere, numeri, spazi, -, &, ', .)
                                 </div>
@@ -48,7 +46,7 @@
                                 </div>
                             </div>
 
-                            <!-- Campo Genere Musicale (metà larghezza su desktop) -->
+                            <!-- Campo Genere Musicale -->
                             <div class="col-md-6 mb-3">
                                 <label for="genre" class="form-label fw-semibold">
                                     Genere Musicale <span class="text-danger">*</span>
@@ -70,7 +68,7 @@
 
                         <!-- Seconda riga: Programma e durata -->
                         <div class="row">
-                            <!-- Campo Giorno del Festival (un terzo della larghezza) -->
+                            <!-- Campo Giorno del Festival -->
                             <div class="col-md-4 mb-3">
                                 <label for="day" class="form-label fw-semibold">
                                     Giorno <span class="text-danger">*</span>
@@ -90,14 +88,14 @@
                                 </div>
                             </div>
 
-                            <!-- Campo Orario di Inizio (un terzo della larghezza) -->
+                            <!-- Campo Orario di Inizio -->
                             <div class="col-md-4 mb-3">
                                 <label for="start_time" class="form-label fw-semibold">
                                     Orario Inizio <span class="text-danger">*</span>
                                 </label>
                                 <!-- Input time picker con range e step -->
-                                <input type="time" class="form-control" id="start_time" name="start_time" min="18:00"
-                                    max="03:00" step="900" value="{{ performance.start_time }}" required>
+                                <input type="time" class="form-control" id="start_time" name="start_time" step="900"
+                                    value="{{ performance.start_time }}" required>
                                 <div class="invalid-feedback">
                                     Seleziona un orario valido
                                 </div>
@@ -122,7 +120,7 @@
 
                         <!-- Terza riga: Palco -->
                         <div class="row">
-                            <!-- Campo Palco (metà larghezza) -->
+                            <!-- Campo Palco -->
                             <div class="col-md-6 mb-3">
                                 <label for="stage" class="form-label fw-semibold">
                                     Palco <span class="text-danger">*</span>
@@ -197,10 +195,7 @@
                                         <i class="fas fa-expand-arrows-alt text-primary me-1"></i>
                                         <strong>Proporzioni:</strong> Formato panoramico
                                     </div>
-                                    <div class="col-md-6">
-                                        <i class="fas fa-lightbulb text-warning me-1"></i>
-                                        <strong>Qualità:</strong> HD consigliata
-                                    </div>
+
                                 </div>
                                 {% if 'edit' not in request.endpoint %}
                                 <div class="mt-1">

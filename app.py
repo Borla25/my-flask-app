@@ -51,15 +51,15 @@ def save_image(file, prefix, max_width=None, min_height=None, max_height=None):
         
         img = Image.open(file)
         
-        # ✅ NUOVO: Controlla altezza minima
+        # Controlla altezza minima
         if min_height and img.height < min_height:
             return None, f"L'immagine deve essere alta almeno {min_height}px (attuale: {img.height}px)"
         
-        # ✅ NUOVO: Controlla altezza massima
+        # Controlla altezza massima
         if max_height and img.height > max_height:
             return None, f"L'immagine non può essere più alta di {max_height}px (attuale: {img.height}px)"
         
-        # ✅ NUOVO: Controlla proporzioni (formato panoramico)
+        # Controlla proporzioni (formato panoramico)
         aspect_ratio = img.width / img.height
         if aspect_ratio < 0.8:  # Troppo verticale
             return None, f"L'immagine è troppo stretta (proporzioni {aspect_ratio:.2f}). Usa un formato più panoramico."
@@ -69,7 +69,7 @@ def save_image(file, prefix, max_width=None, min_height=None, max_height=None):
             ratio = max_width / img.width
             new_height = int(img.height * ratio)
             
-            # ✅ NUOVO: Controlla che dopo il resize sia ancora valida
+            # Controlla che dopo il resize sia ancora valida
             if min_height and new_height < min_height:
                 return None, f"Dopo il ridimensionamento l'immagine sarebbe troppo bassa ({new_height}px < {min_height}px)"
             
@@ -243,10 +243,10 @@ def buy_ticket():
     existing_tickets = tickets_dao.get_user_tickets(current_user.id)
     has_multi_day = any(ticket['ticket_type'] in ['2days', 'full'] for ticket in existing_tickets)
     
-    # ✅ AGGIUNGI: Dati dal controller invece che template
+    # Dati dal controller invece che template
     ticket_types = [
         {
-            'id': 'daily',          # ✅ Deve corrispondere all'input radio
+            'id': 'daily',         
             'value': 'daily', 
             'title': 'Biglietto Giornaliero',
             'description': 'Valido per un solo giorno',
@@ -255,7 +255,7 @@ def buy_ticket():
             'disabled_reason': 'Hai già un pass multi-giorno'
         },
         {
-            'id': 'twodays',        # ✅ Deve corrispondere all'input radio
+            'id': 'twodays',       
             'value': '2days',
             'title': 'Pass 2 Giorni', 
             'description': 'Valido per due giorni consecutivi',
@@ -265,7 +265,7 @@ def buy_ticket():
             'disabled_reason': 'Hai già altri biglietti'
         },
         {
-            'id': 'full',           # ✅ Deve corrispondere all'input radio
+            'id': 'full',         
             'value': 'full',
             'title': 'Full Pass',
             'description': 'Valido per tutti e tre i giorni', 
@@ -276,7 +276,7 @@ def buy_ticket():
         }
     ]
     
-    # ✅ AGGIUNGI: Giorni del festival dal controller
+    # Giorni del festival dal controller
     festival_days = [
         {
             'value': 'venerdi',
@@ -303,8 +303,8 @@ def buy_ticket():
                          covered_days=covered_days,
                          existing_tickets=existing_tickets,
                          has_multi_day=has_multi_day,
-                         ticket_types=ticket_types,      # ✅ NUOVO
-                         festival_days=festival_days)    # ✅ NUOVO
+                         ticket_types=ticket_types,      
+                         festival_days=festival_days)    
 
 @app.route("/buy_ticket", methods=["POST"])
 @login_required
@@ -316,7 +316,7 @@ def buy_ticket_post():
     ticket_type = request.form.get('ticket_type')
     selected_days = request.form.getlist('days')
     
-    # ← AGGIUNGI: Validazione specifica per tipo biglietto
+    # Validazione specifica per tipo biglietto
     if ticket_type == 'daily':
         # Per biglietto giornaliero: esattamente 1 giorno da 'single_day'
         single_day = request.form.get('single_day')

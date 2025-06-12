@@ -18,7 +18,7 @@
         <h2 class="mb-3 fw-semibold text-site-primary">
             <i class="fas fa-filter me-2"></i>Filtra le Performance
         </h2>
-        
+
         <form method="GET" action="{{ url_for('home') }}">
             <div class="row g-3">
                 <!-- Filtro giorno -->
@@ -26,35 +26,40 @@
                     <label for="day" class="form-label fw-medium">Giorno</label>
                     <select class="form-select" id="day" name="day">
                         <option value="">Tutti i giorni</option>
-                        <option value="2025-07-12" {{ 'selected' if request.args.get('day') == '2025-07-12' }}>Venerdì 12 Luglio</option>
-                        <option value="2025-07-13" {{ 'selected' if request.args.get('day') == '2025-07-13' }}>Sabato 13 Luglio</option>
-                        <option value="2025-07-14" {{ 'selected' if request.args.get('day') == '2025-07-14' }}>Domenica 14 Luglio</option>
+                        <option value="2025-07-12" {{ 'selected' if request.args.get('day')=='2025-07-12' }}>Venerdì 12
+                            Luglio</option>
+                        <option value="2025-07-13" {{ 'selected' if request.args.get('day')=='2025-07-13' }}>Sabato 13
+                            Luglio</option>
+                        <option value="2025-07-14" {{ 'selected' if request.args.get('day')=='2025-07-14' }}>Domenica 14
+                            Luglio</option>
                     </select>
                 </div>
-                
+
                 <!-- Filtro palco -->
                 <div class="col-md-4">
                     <label for="stage" class="form-label fw-medium">Palco</label>
                     <select class="form-select" id="stage" name="stage">
                         <option value="">Tutti i palchi</option>
                         {% for stage in stages %}
-                        <option value="{{ stage.name }}" {{ 'selected' if request.args.get('stage') == stage.name }}>{{ stage.name }}</option>
+                        <option value="{{ stage.name }}" {{ 'selected' if request.args.get('stage')==stage.name }}>{{
+                            stage.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                
+
                 <!-- Filtro genere -->
                 <div class="col-md-4">
                     <label for="genre" class="form-label fw-medium">Genere</label>
                     <select class="form-select" id="genre" name="genre">
                         <option value="">Tutti i generi</option>
                         {% for genre in genres %}
-                        <option value="{{ genre }}" {{ 'selected' if request.args.get('genre') == genre }}>{{ genre }}</option>
+                        <option value="{{ genre }}" {{ 'selected' if request.args.get('genre')==genre }}>{{ genre }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>
             </div>
-            
+
             <div class="row mt-3">
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary me-2">
@@ -77,48 +82,46 @@
                 <article class="card h-100 shadow-sm border-0">
                     <!-- Immagine o placeholder -->
                     {% if performance.performance_image %}
-                    <img src="{{ url_for('static', filename='uploads/' + performance.performance_image) }}" 
-                         class="card-img-top"
-                         alt="{{ performance.artist_name }}"
-                         loading="lazy">
+                    <img src="{{ url_for('static', filename='uploads/' + performance.performance_image) }}"
+                        class="card-img-top" alt="{{ performance.artist_name }}" loading="lazy">
                     {% else %}
                     <div class="card-img-top bg-light d-flex align-items-center justify-content-center">
                         <i class="fas fa-music fa-3x text-muted"></i>
                     </div>
                     {% endif %}
-                    
+
                     <div class="card-body d-flex flex-column">
                         <!-- Titolo artista -->
                         <h3 class="card-title h5 fw-bold mb-2">{{ performance.artist_name }}</h3>
-                        
+
                         <!-- Descrizione -->
                         <p class="card-text text-muted small mb-3">{{ performance.description[:100] }}...</p>
-                        
+
                         <!-- Badge a due righe: Palco+Data sopra, Ora sotto -->
                         <div class="badge-container">
                             <!-- Prima riga: Palco e Data -->
                             <div class="mb-2">
-                                <span class="badge bg-primary rounded-pill">
+                                <span class="badge bg-primary">
                                     <i class="fas fa-map-marker-alt me-1"></i>{{ performance.stage_name }}
                                 </span>
                                 <span class="badge bg-secondary rounded-pill">
                                     <i class="fas fa-calendar-day me-1"></i>
-                                    {% if performance.day == '2025-07-12' %}Ven 12{% elif performance.day == '2025-07-13' %}Sab 13{% else %}Dom 14{% endif %}
+                                    {% if performance.day == '2025-07-12' %}Ven 12{% elif performance.day ==
+                                    '2025-07-13' %}Sab 13{% else %}Dom 14{% endif %}
                                 </span>
                             </div>
-                            
+
                             <!-- Seconda riga: Solo Ora -->
                             <div>
-                                <!-- Viola -->
                                 <span class="badge bg-dark rounded-pill">
                                     <i class="fas fa-clock me-1"></i>{{ performance.start_time }}
                                 </span>
                             </div>
                         </div>
-                        
+
                         <!-- Bottone dettagli -->
-                        <a href="{{ url_for('performance_detail', id=performance.id) }}" 
-                           class="btn btn-primary mt-auto">
+                        <a href="{{ url_for('performance_detail', id=performance.id) }}"
+                            class="btn btn-primary mt-auto">
                             <i class="fas fa-info-circle me-1"></i>Dettagli
                         </a>
                     </div>
@@ -126,7 +129,7 @@
             </div>
             {% endfor %}
         </div>
-        
+
         {% else %}
         <!-- Nessun risultato -->
         <div class="text-center py-5">

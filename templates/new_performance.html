@@ -29,18 +29,15 @@
           <!-- Form che invia dati via POST con supporto per upload file -->
           <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
             <div class="row">
-              <!-- Campo Nome Artista/Gruppo (metà larghezza su desktop) -->
+              <!-- Campo Nome Artista/Gruppo -->
               <div class="col-md-6 mb-3">
                 <label for="artist_name" class="form-label fw-semibold">
                   Nome Artista/Gruppo <span class="text-danger">*</span>
                 </label>
-                <!--
-                    Input text con validazione Bootstrap integrata
-                    Pattern regex per caratteri consentiti
-                  -->
+                <!-- input text con validazione -->
                 <input type="text" class="form-control" id="artist_name" name="artist_name"
                   pattern="[A-Za-z0-9\s\-&'.]+" minlength="2" maxlength="100" required>
-                <!-- Feedback di validazione Bootstrap -->
+                <!-- Feedback di validazione -->
                 <div class="invalid-feedback">
                   Il nome deve contenere tra 2 e 100 caratteri (lettere, numeri, spazi, -, &, ', .)
                 </div>
@@ -50,15 +47,13 @@
                 </div>
               </div>
 
-              <!-- Campo Genere Musicale (metà larghezza su desktop) -->
+              <!-- Campo Genere Musicale -->
               <div class="col-md-6 mb-3">
                 <label for="genre" class="form-label fw-semibold">
                   Genere Musicale <span class="text-danger">*</span>
                 </label>
-                <!--
-                    Select dropdown con opzioni dinamiche dal database
-                    Loop ottimizzato per evitare duplicazione di codice
-                  -->
+                <!-- Select dropdown con opzioni dinamiche dal database
+                    Loop per evitare duplicazione di codice -->
                 <select class="form-select" id="genre" name="genre" required>
                   <option value="">-- Seleziona Genere --</option>
                   <!-- Loop attraverso tutti i generi disponibili dal database -->
@@ -74,10 +69,7 @@
             </fieldset>
 
             <div class="row">
-              <!--
-                  Campo Giorno del Festival
-                  Date CORRETTE per il 2025
-                -->
+              <!-- Campo Giorno del Festival -->
               <div class="col-md-4 mb-3">
                 <label for="day" class="form-label fw-semibold">
                   Giorno Festival <span class="text-danger">*</span>
@@ -85,7 +77,6 @@
                 <select class="form-select" id="day" name="day" required>
                   <option value="">-- Seleziona Giorno --</option>
                   <!--
-                      Date AGGIORNATE per il 2025
                       Array ottimizzato per evitare hardcoding ripetuto
                     -->
                   {% set festival_days = [
@@ -103,15 +94,12 @@
                 </div>
               </div>
 
-              <!-- Campo Orario di Inizio SENZA validazione range -->
+              <!-- Campo Orario di Inizio  -->
               <div class="col-md-4 mb-3">
                 <label for="start_time" class="form-label fw-semibold">
                   Orario Inizio <span class="text-danger">*</span>
                 </label>
-                <!--
-                    Input time SENZA min/max - controlli rimossi
-                    Nessuna limitazione sugli orari
-                  -->
+                <!-- Input time -->
                 <input type="time" class="form-control" id="start_time" name="start_time" required>
                 <div class="invalid-feedback">
                   Inserisci un orario valido
@@ -121,15 +109,12 @@
                 </div>
               </div>
 
-              <!-- Campo Durata con validazione semplificata -->
+              <!-- Campo Durata -->
               <div class="col-md-4 mb-3">
                 <label for="duration" class="form-label fw-semibold">
                   Durata (minuti) <span class="text-danger">*</span>
                 </label>
-                <!--
-                    Input numerico con range 30-180 minuti
-                    Validazione per performance realistiche
-                  -->
+                <!-- Input numerico con range 30-180 minuti -->
                 <input type="number" class="form-control" id="duration" name="duration" min="30" max="180" required>
                 <div class="invalid-feedback">
                   La durata deve essere tra 30 e 180 minuti
@@ -142,15 +127,12 @@
             </fieldset>
 
             <div class="row">
-              <!-- Campo Palco (metà larghezza) -->
+              <!-- Campo Palco -->
               <div class="col-md-6 mb-3">
                 <label for="stage" class="form-label fw-semibold">
                   Palco <span class="text-danger">*</span>
                 </label>
-                <!--
-                    Select dropdown per palchi dal database
-                    Gestione caso in cui non ci sono palchi disponibili
-                  -->
+                <!-- Select dropdown per palchi dal database -->
                 <select class="form-select" id="stage" name="stage" required>
                   <option value="">-- Seleziona Palco --</option>
                   {% if stages %}
@@ -175,10 +157,7 @@
               <label for="description" class="form-label fw-semibold">
                 Descrizione Performance <span class="text-danger">*</span>
               </label>
-              <!--
-                  Textarea con validazione lunghezza
-                  Resize solo verticale per UI consistente
-                -->
+              <!-- Textarea con validazione lunghezza -->
               <textarea class="form-control" id="description" name="description" rows="4" minlength="10" maxlength="500"
                 placeholder="Descrivi l'artista, lo stile musicale, cosa aspettarsi dalla performance..."
                 style="min-height: 100px; resize: vertical;" required></textarea>
@@ -204,7 +183,7 @@
                   </label>
                   <input type="file" class="form-control" id="performance_image" name="performance_image"
                     accept="image/jpeg,image/png,image/gif,image/webp">
-                  <!-- ✅ AGGIORNATO: Specifiche tecniche con altezza minima -->
+                  <!-- Specifiche tecniche con altezza minima -->
                   <div class="form-text small">
                     <div class="row">
                       <div class="col-md-6">

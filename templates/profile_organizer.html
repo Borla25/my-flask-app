@@ -7,7 +7,7 @@ content %}
 <main class="container py-4">
   <!-- Layout a due colonne: sidebar + contenuto principale -->
   <div class="row">
-    <!-- SIDEBAR SINISTRA: Profilo utente e statistiche (1/3 della larghezza) -->
+    <!-- SIDEBAR SINISTRA: Profilo utente e statistiche -->
     <aside class="col-md-4">
       <!-- Card profilo utente con informazioni personali -->
       <section class="card profile-card shadow-sm border-0">
@@ -73,7 +73,7 @@ content %}
           <!-- Separatore visivo -->
           <hr class="my-3" />
 
-          <!-- Sezione breakdown vendite per tipo di biglietto -->
+          <!-- Vendite per tipo di biglietto -->
           <h3 class="h6 fw-semibold mb-3">Vendite per Tipo:</h3>
           <!-- Lista descrittiva con layout flexbox per allineare numeri -->
           <dl class="sales-breakdown mb-4">
@@ -155,7 +155,7 @@ content %}
       </section>
     </aside>
 
-    <!-- CONTENUTO PRINCIPALE: Lista performance dell'organizzatore (2/3 della larghezza) -->
+    <!-- CONTENUTO PRINCIPALE: Lista performance dell'organizzatore -->
     <section class="col-md-8">
       <!-- Header della sezione con titolo e bottone di azione -->
       <header class="d-flex justify-content-between align-items-center mb-4">
@@ -270,7 +270,7 @@ content %}
                         action="{{ url_for('publish_performance_route', performance_id=performance.id) }}"
                         class="d-inline"
                       >
-                        <!-- Bottone pubblica con conferma JavaScript -->
+                        <!-- Bottone pubblica con conferma -->
                         <button
                           type="submit"
                           class="btn btn-outline-success btn-sm w-100 shadow-sm"

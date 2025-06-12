@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
   <head>
-    <!-- Codifica caratteri UTF-8 per supportare caratteri speciali -->
     <meta charset="UTF-8" />
 
     <!-- Configurazione responsive per dispositivi mobile -->
@@ -32,9 +31,7 @@
   <body>
     <!-- Header principale con navigazione -->
     <header>
-      <!-- Navbar Bootstrap responsive con tema scuro e ombra pronunciata -->
       <nav class="navbar navbar-expand-lg navbar-dark shadow">
-        <!-- Container Bootstrap per centrare il contenuto con margini automatici -->
         <div class="container">
           <!-- Nome del festival che punta alla homepage - funge da logo -->
           <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
@@ -49,7 +46,7 @@
             data-bs-toggle="collapse"
             data-bs-target="#navbarNav"
           >
-            <!-- Icona del bottone hamburger (tre linee orizzontali) -->
+            <!-- Icona del bottone hamburger -->
             <span class="navbar-toggler-icon"></span>
           </button>
 
@@ -100,7 +97,7 @@
                       <i class="fas fa-user-circle me-2"></i>Profilo
                     </a>
                   </li>
-                  <!-- Separatore visivo tra le opzioni -->
+                  <!-- Separatore -->
                   <li><hr class="dropdown-divider" /></li>
                   <!-- Link per logout -->
                   <li>
@@ -123,7 +120,7 @@
                 </a>
               </li>
 
-              <!-- Bottone login che apre modal - stile solido -->
+              <!-- Bottone login che apre modal -->
               <li class="nav-item">
                 <button
                   class="btn btn-light"
@@ -165,7 +162,7 @@
     <!-- Area principale del contenuto - qui si inseriscono i template figli -->
     <main>{% block content %}{% endblock %}</main>
 
-    <!-- Modal di login - SEMPRE presente nel DOM ma nascosto inizialmente -->
+    <!-- Modal di login - sempre presente nel DOM ma nascosto inizialmente -->
     <div class="modal fade" id="loginModal">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -184,7 +181,7 @@
           <!-- Form di login che invia POST alla route login -->
           <form method="POST" action="{{ url_for('login') }}">
             <div class="modal-body">
-              <!-- Campo email con validazione HTML5 -->
+              <!-- Campo email con validazione -->
               <div class="mb-3">
                 <label for="loginEmail" class="form-label">Email</label>
                 <input
@@ -209,7 +206,7 @@
               </div>
             </div>
 
-            <!-- Footer del modal con bottoni azione -->
+            <!-- Footer del modal -->
             <div class="modal-footer">
               <!-- Bottone per annullare e chiudere il modal -->
               <button
@@ -242,7 +239,7 @@
             </p>
           </div>
 
-          <!-- Colonna destra con credits e info progetto -->
+          <!-- Colonna destra con credits -->
           <div class="col-md-6 text-md-end">
             <p class="text-muted mb-0">
               Creato per il corso <strong>IAW</strong>

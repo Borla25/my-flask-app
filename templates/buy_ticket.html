@@ -10,7 +10,7 @@ content %}
     <div class="col-lg-8">
       <!-- Card principale che contiene tutto il form di acquisto -->
       <div class="card shadow">
-        <!-- Header della card con titolo e icona -->
+        <!-- Header della card -->
         <div class="card-header">
           <h1>
             <!-- Icona Font Awesome per biglietti -->
@@ -22,28 +22,29 @@ content %}
         <div class="card-body p-4">
           <!-- Form che invia dati via POST alla stessa route -->
           <form method="POST">
-            <!-- ===== SEZIONE 1: SELEZIONE TIPO BIGLIETTO ===== -->
+            <!-- == SEZIONE 1: SELEZIONE TIPO BIGLIETTO == -->
             <fieldset class="mb-4">
               <legend class="h5 mb-3">Scegli il tipo di biglietto:</legend>
 
               <div class="row">
-                <!-- ✅ USA I DATI DAL CONTROLLER -->
                 {% for ticket in ticket_types %}
                 <div class="col-md-4 mb-3">
-                  <!-- ✅ AGGIUNGI: Input radio DENTRO ogni card -->
-                  <input type="radio" id="{{ ticket.id }}" name="ticket_type" value="{{ ticket.value }}"
-                    {% if ticket.disabled %}disabled{% endif %} style="display: none" />
+                  <input type="radio" id="{{ ticket.id }}" name="ticket_type" value="{{ ticket.value }}" {% if
+                    ticket.disabled %}disabled{% endif %} />
 
+                  <!-- Label che rende tutta la card cliccabile -->
                   <label for="{{ ticket.id }}" class="w-100">
+                    <!-- Card personalizzata che cambia aspetto quando selezionata -->
                     <div class="card h-100 ticket-option {% if ticket.disabled %}disabled-ticket{% endif %}">
                       <div class="card-body text-center p-4 d-flex flex-column">
+                        <!-- Titolo del biglietto con eventuale icona lock -->
                         <h2 class="h5 mb-3 {% if ticket.disabled %}text-muted{% endif %}">
                           {{ ticket.title }}
                           {% if ticket.disabled %}
                           <i class="fas fa-lock ms-2 text-muted" title="Non disponibile"></i>
                           {% endif %}
                         </h2>
-
+                        <!-- Descrizione con flex-grow per occupare spazio disponibile -->
                         <p class="card-text mb-3 flex-grow-1 {% if ticket.disabled %}text-muted{% endif %}">
                           {% if ticket.disabled %}
                           Non disponibile - {{ ticket.disabled_reason }}
@@ -51,7 +52,7 @@ content %}
                           {{ ticket.description }}
                           {% endif %}
                         </p>
-
+                        <!-- Prezzo sempre in fondo grazie a mt-auto -->
                         <div class="mt-auto">
                           <strong class="price text-primary h4 d-block {% if ticket.disabled %}text-muted{% endif %}">
                             €{{ ticket.price }}
@@ -70,35 +71,40 @@ content %}
             </fieldset>
 
             <!-- ===== SEZIONE 2: SELEZIONE GIORNI ===== -->
+            <!-- Visibilità dinamica: nascosta se utente ha già multi-day pass -->
             {% if not has_multi_day %}
             <div class="day-selection">
               <fieldset class="mb-4">
                 <legend class="h5">Seleziona i giorni:</legend>
 
                 <div class="row">
-                  <!-- ✅ USA I DATI DAL CONTROLLER -->
                   {% for day in festival_days %}
                   <div class="col-md-4">
+                    <!-- bg-light se giorno già coperto da acquisti precedenti -->
                     <div
                       class="form-check p-3 border rounded mb-2 {% if day.value in covered_days %}bg-light{% endif %}">
                       <input class="form-check-input checkbox-day" type="checkbox" id="{{ day.id_prefix }}_check"
                         name="days" value="{{ day.value }}" {% if day.value in covered_days %}disabled{% endif %} />
 
                       <input class="form-check-input radio-day" type="radio" id="{{ day.id_prefix }}_radio"
-                        name="single_day" value="{{ day.value }}" {% if day.value in covered_days %}disabled{% endif %}
-                        style="display: none" />
+                        name="single_day" value="{{ day.value }}" {% if day.value in covered_days %}disabled{% endif
+                        %} />
 
                       <label class="form-check-label w-100" for="{{ day.id_prefix }}_check">
                         <strong class="d-block">
-                          {{ day.label }} {% if day.value in covered_days %}
+                          {{ day.label }}
+                          <!-- Checkmark verde se giorno già acquistato -->
+                          {% if day.value in covered_days %}
                           <i class="fas fa-check-circle text-success ms-1"></i>
                           {% endif %}
                         </strong>
-
+                        <!-- Info disponibilità posti -->
                         <small class="text-muted">
-                          {% if day.value in covered_days %} Già acquistato {%
-                          else %} Disponibili: {{ availability[day.value] or 200
-                          }} posti {% endif %}
+                          {% if day.value in covered_days %}
+                          Già acquistato
+                          {% else %}
+                          Disponibili: {{ availability[day.value] or 200 }} posti
+                          {% endif %}
                         </small>
                       </label>
                     </div>
