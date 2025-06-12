@@ -180,9 +180,22 @@
                             <!-- Input file per caricare nuova immagine -->
                             <input type="file" class="form-control" id="performance_image" name="performance_image"
                                 accept="image/jpeg,image/png,image/gif,image/webp">
+                            <!-- Testo di aiuto con specifiche tecniche -->
                             <div class="form-text small">
-                                <i class="fas fa-image me-1"></i>Lascia vuoto per mantenere l'immagine attuale. Formati
-                                supportati: JPG, PNG, GIF, WebP (max 5MB)
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <i class="fas fa-check-circle text-success me-1"></i>
+                                        <strong>Formati:</strong> JPG, PNG, GIF, WebP
+                                    </div>
+                                    <div class="col-md-6">
+                                        <i class="fas fa-ruler text-info me-1"></i>
+                                        <strong>Dimensioni:</strong> Min. 600px di altezza
+                                    </div>
+                                </div>
+                                <div class="mt-1">
+                                    <i class="fas fa-lightbulb text-warning me-1"></i>
+                                    <small>Lascia vuoto per mantenere l'immagine attuale</small>
+                                </div>
                             </div>
                         </div>
 

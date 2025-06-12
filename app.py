@@ -42,28 +42,36 @@ login_manager.init_app(app)
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def save_image(file, prefix, max_width=None):
-    """Save and resize uploaded image - ULTRA OTTIMIZZATA"""
+def save_image(file, prefix, max_width=None, min_height=None):
+    """Save and resize uploaded image - CON VALIDAZIONE ALTEZZA"""
     if file and allowed_file(file.filename):
         filename = file.filename
         timestamp = int(datetime.now().timestamp())
-        new_filename = f"{prefix}_{timestamp}.webp"  # WebP più veloce
+        new_filename = f"{prefix}_{timestamp}.webp"
         
         img = Image.open(file)
+        
+        # ✅ NUOVO: Controlla altezza minima
+        if min_height and img.height < min_height:
+            return None, f"L'immagine deve essere alta almeno {min_height}px (attuale: {img.height}px)"
         
         # Ridimensiona sempre per web
         if max_width and img.width > max_width:
             ratio = max_width / img.width
             new_height = int(img.height * ratio)
+            
+            # ✅ NUOVO: Controlla che dopo il resize sia ancora abbastanza alta
+            if min_height and new_height < min_height:
+                return None, f"Dopo il ridimensionamento l'immagine sarebbe troppo bassa ({new_height}px < {min_height}px)"
+            
             img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
         
         filepath = f"{app.config['UPLOAD_FOLDER']}/{new_filename}"
-        
-        # ✅ QUALITÀ MOLTO RIDOTTA per velocità
         img.save(filepath, "WebP", quality=60, optimize=True)
         
-        return new_filename
-    return None
+        return new_filename, None  # ✅ NUOVO: Ritorna anche messaggio errore
+    
+    return None, "File non valido"
 
 def validate_performance_timing(stage, day, start_time, duration, exclude_id=None):
     """Validate that a performance doesn't conflict with existing ones"""
@@ -417,8 +425,18 @@ def new_performance_post():
     
     performance_image = request.files.get('performance_image')
     if performance_image:
-        image_filename = save_image(performance_image, f"perf_{form_data['artist_name']}", PERFORMANCE_IMG_WIDTH)
-        form_data['performance_image'] = image_filename
+        # ✅ NUOVO: Aggiungi validazione altezza minima 600px
+        result = save_image(performance_image, f"perf_{form_data['artist_name']}", 
+                       PERFORMANCE_IMG_WIDTH, min_height=600)
+    
+        if isinstance(result, tuple):  # ✅ NUOVO: Gestisci errore
+            image_filename, error_message = result
+            if error_message:
+                flash(f"Errore immagine: {error_message}", "danger")
+                return redirect(url_for("new_performance"))
+            form_data['performance_image'] = image_filename
+        else:
+            form_data['performance_image'] = result  # Backward compatibility
     else:
         form_data['performance_image'] = None
     
@@ -488,7 +506,10 @@ def edit_performance_post(id):
     
     performance_image = request.files.get('performance_image')
     if performance_image:
-        image_filename = save_image(performance_image, f"perf_{form_data['artist_name']}", PERFORMANCE_IMG_WIDTH)
+        image_filename, error_message = save_image(performance_image, f"perf_{form_data['artist_name']}", PERFORMANCE_IMG_WIDTH, min_height=100)
+        if error_message:
+            flash(error_message, "danger")
+            return redirect(url_for("edit_performance", id=id))
         form_data['performance_image'] = image_filename
     
     success = performances_dao.update_performance(form_data)
