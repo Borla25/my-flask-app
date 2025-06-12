@@ -1,277 +1,101 @@
-/* ===== CONFIGURAZIONE GLOBALE COLORI E VARIABILI ===== */
+/* ===== CONFIGURAZIONE GLOBALE ===== */
 :root {
-  /* Colori principali del tema festival */
-  --primary: #d2691e;    /* Arancione scuro - colore principale del brand */
-  --secondary: #f4a460;  /* Arancione chiaro - colore secondario */
-  --accent: #ff7f50;     /* Corallo - colore di accento per evidenziazioni */
-  --dark: #8b4513;       /* Marrone scuro - per contrasti e testi */
-  --success: #228b22;    /* Verde bosco - per messaggi di successo */
-  
-  /* Gradienti personalizzati per elementi grafici avanzati */
-  --gradient-primary: linear-gradient(
-    135deg,
-    var(--primary) 0%,
-    var(--secondary) 100%
-  );
-  --gradient-dark: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+  /* Colori tema festival */
+  --primary: #d2691e;
+  --secondary: #f4a460;
+  --accent: #ff7f50;
+  --dark: #8b4513;
+  --success: #228b22;
+
+  /* Gradienti */
+  --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+  --gradient-dark: linear-gradient(135deg, var(--dark), var(--primary));
+  --gradient-success: linear-gradient(135deg, var(--success), var(--primary));
 }
 
-/* ===== OVERRIDE COMPONENTI BOOTSTRAP ===== */
-
-/* Pulsanti principali con gradiente personalizzato */
+/* ===== OVERRIDE BOOTSTRAP ===== */
 .btn-primary {
-  background: var(--gradient-primary) !important;  /* Gradiente arancione */
-  border-color: var(--primary) !important;         /* Bordo arancione scuro */
-}
-
-/* Navbar con tema scuro e gradiente */
-.navbar {
-  background: var(--gradient-dark) !important;     /* Gradiente marrone-arancione */
-}
-
-/* Header principale del festival - elemento grafico di impatto */
-.festival-header {
-  background: var(--gradient-primary) !important;  /* Sfondo con gradiente */
-  color: white !important;                         /* Testo bianco per contrasto */
-}
-
-/* Forza tutti gli elementi figli dell'header ad essere bianchi */
-.festival-header * {
-  color: white !important;
-}
-
-/* ===== PERSONALIZZAZIONE BADGE BOOTSTRAP ===== */
-
-/* Badge primari con gradiente */
-.badge.bg-primary {
   background: var(--gradient-primary) !important;
+  border-color: var(--primary) !important;
 }
 
-/* Badge secondari con gradiente scuro */
-.badge.bg-secondary {
-  background: var(--gradient-dark) !important;
-}
-
-/* Badge informativi con colore accent */
-.badge.bg-info {
-  background: var(--gradient-accent) !important;
-  color: white !important;
-}
-
-/* Badge di successo con gradiente verde-arancione */
-.badge.bg-success {
-  background: linear-gradient(
-    135deg,
-    var(--success),
-    var(--primary)
-  ) !important;
-}
-
-/* ===== ELEMENTI DI LAYOUT ===== */
-
-/* Footer coordinato con il tema del sito */
+.navbar,
 .footer-festival {
   background: var(--gradient-dark) !important;
   color: white !important;
 }
 
-/* ===== LOGICA BIGLIETTI - FUNZIONALITÀ CORE DELL'APP ===== */
+.festival-header,
+.festival-header * {
+  background: var(--gradient-primary) !important;
+  color: white !important;
+}
 
-/* Display di default per i controlli dei giorni */
+/* Badge con gradienti */
+.badge.bg-primary {
+  background: var(--gradient-primary) !important;
+}
+
+.badge.bg-secondary {
+  background: var(--gradient-dark) !important;
+}
+
+.badge.bg-success {
+  background: var(--gradient-success) !important;
+}
+
+.badge.bg-info {
+  background: var(--accent) !important;
+  color: white !important;
+}
+
+/* ===== EFFETTI GLOBALI ===== */
+.card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s;
+}
+
+/* ===== LOGICA BIGLIETTI ===== */
+/* Default: checkbox visibili, radio nascosti */
 .checkbox-day {
-  display: inline-block;  /* Checkbox visibili di default */
-}
-.radio-day {
-  display: none;          /* Radio nascosti di default */
+  display: inline-block;
 }
 
-/* BIGLIETTO GIORNALIERO: mostra radio, nascondi checkbox */
+.radio-day {
+  display: none;
+}
+
+/* Biglietto giornaliero: inverti visibilità */
 form:has(input[value="daily"]:checked) .checkbox-day {
   display: none !important;
 }
+
 form:has(input[value="daily"]:checked) .radio-day {
   display: inline-block !important;
 }
 
-/* FULL PASS: disabilita la selezione giorni (non necessaria) */
+/* Full pass: disabilita selezione giorni */
 form:has(input[value="full"]:checked) .day-selection {
-  opacity: 0.5;           /* Opacità ridotta per indicare disabilitazione */
-  pointer-events: none;   /* Impedisce interazione con i controlli */
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-/* PASS 2 GIORNI: mantieni checkbox per selezione multipla */
+/* Pass 2 giorni: mantieni checkbox */
 form:has(input[value="2days"]:checked) .checkbox-day {
   display: inline-block !important;
 }
+
 form:has(input[value="2days"]:checked) .radio-day {
   display: none !important;
 }
 
-/* ===== EFFETTI HOVER E TRANSIZIONI ===== */
-
-/* Effetto hover per le card - sollevamento leggero */
-.card:hover {
-  transform: translateY(-2px);  /* Sollevamento di 2px */
-  transition: transform 0.2s;   /* Transizione fluida */
-}
-
-/* Effetto hover per i pulsanti */
-.btn:hover {
-  transform: translateY(-1px);  /* Sollevamento di 1px (più sottile delle card) */
-  transition: transform 0.2s;
-}
-
-/* ===== COMPONENTI BADGE PERSONALIZZATI ===== */
-
-/* Container per raggruppare badge in modo ordinato */
-.badge-container {
-  text-align: center;     /* Centra i badge */
-  margin-bottom: 1rem;    /* Spazio sotto il container */
-}
-
-/* Spaziatura uniforme tra i badge */
-.badge-container .badge {
-  margin: 0.25rem;        /* Margine di 4px attorno a ogni badge */
-}
-
-/* ===== UTILITY CLASSES ===== */
-
-/* Classe per testi con colore primario del sito */
-.text-site-primary {
-  color: var(--primary) !important;
-}
-
-/* ===== SISTEMA SELEZIONE BIGLIETTI - INTERFACCIA UTENTE ===== */
-
-/* Stile base per le card opzione biglietto */
-.ticket-option {
-  border: 2px solid #dee2e6;     /* Bordo grigio chiaro di default */
-  transition: all 0.3s ease;     /* Transizione fluida per tutti i cambiamenti */
-  cursor: pointer;               /* Cursore a mano per indicare interattività */
-  position: relative;            /* Necessario per il posizionamento del check mark */
-  background-color: white;       /* ✅ AGGIUNTO: sfondo bianco di default */
-}
-
-/* Effetto hover sulle card biglietto (solo se non disabilitate) */
-.ticket-option:hover:not(.disabled-ticket) {
-  border-color: var(--primary);                      /* Bordo arancione al hover */
-  box-shadow: 0 4px 12px rgba(210, 105, 30, 0.15);  /* Ombra arancione sottile */
-}
-
-/* Reset: tutte le card ticket-option hanno stili di default */
-.ticket-option {
-  border: 2px solid #dee2e6;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  position: relative;
-  background-color: white; /* ✅ AGGIUNTO: sfondo bianco di default */
-}
-
-/* ✅ NUOVO: Nasconde tutti i check mark di default */
-.ticket-option::before {
-  display: none;
-}
-
-/* Card selezionata SOLO quando il corrispondente radio è checked */
-#daily:checked ~ .row .ticket-option:has(label[for="daily"]) {
-  border-color: var(--primary) !important;
-  background-color: rgba(210, 105, 30, 0.05) !important;
-  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
-}
-
-#twodays:checked ~ .row .ticket-option:has(label[for="twodays"]) {
-  border-color: var(--primary) !important;
-  background-color: rgba(210, 105, 30, 0.05) !important;
-  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
-}
-
-#full:checked ~ .row .ticket-option:has(label[for="full"]) {
-  border-color: var(--primary) !important;
-  background-color: rgba(210, 105, 30, 0.05) !important;
-  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
-}
-
-/* ===== INDICATORE VISIVO DI SELEZIONE ===== */
-
-/* Check mark SOLO per la card corrispondente al radio checked */
-#daily:checked ~ .row .ticket-option:has(label[for="daily"])::before {
-  content: "✓";
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: var(--primary);
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex !important; /* ✅ FORZA LA VISUALIZZAZIONE */
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 14px;
-  z-index: 10;
-}
-
-#twodays:checked ~ .row .ticket-option:has(label[for="twodays"])::before {
-  content: "✓";
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: var(--primary);
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex !important; /* ✅ FORZA LA VISUALIZZAZIONE */
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 14px;
-  z-index: 10;
-}
-
-#full:checked ~ .row .ticket-option:has(label[for="full"])::before {
-  content: "✓";
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: var(--primary);
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex !important; /* ✅ FORZA LA VISUALIZZAZIONE */
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 14px;
-  z-index: 10;
-}
-
-/* ===== STATI DISABILITATI ===== */
-
-/* Card biglietto disabilitate */
-.disabled-ticket {
-  opacity: 0.6;                    /* Opacità ridotta per indicare disabilitazione */
-  cursor: not-allowed !important;  /* Cursore "vietato" */
-}
-
-/* ===== GESTIONE CURSORI ===== */
-
-/* Cursore pointer per le label delle card biglietto */
-.ticket-option label {
-  cursor: pointer;
-}
-
-/* Cursore "not-allowed" per card e label disabilitate */
-.disabled-ticket,
-.disabled-ticket label {
-  cursor: not-allowed !important;
-}
-
-/* ===== SISTEMA SELEZIONE BIGLIETTI - MOBILE FRIENDLY ===== */
-
-/* Label che wrappa tutta la card */
+/* ===== SISTEMA BIGLIETTI MOBILE-FRIENDLY ===== */
+/* Card base */
 label .ticket-option {
   border: 2px solid #dee2e6;
   transition: all 0.3s ease;
@@ -280,22 +104,25 @@ label .ticket-option {
   background-color: white;
 }
 
-/* Hover effect */
+/* Hover solo per card abilitate */
 label:hover .ticket-option:not(.disabled-ticket) {
   border-color: var(--primary);
   box-shadow: 0 4px 12px rgba(210, 105, 30, 0.15);
 }
 
-/* ===== STATI SELEZIONATI - MOBILE FRIENDLY ===== */
-
-/* Daily selezionato */
-input[type="radio"]#daily:checked + label .ticket-option {
+/* ===== STATI SELEZIONATI (UNIFICATI) ===== */
+input[type="radio"]#daily:checked+label .ticket-option,
+input[type="radio"]#twodays:checked+label .ticket-option,
+input[type="radio"]#full:checked+label .ticket-option {
   border-color: var(--primary) !important;
   background-color: rgba(210, 105, 30, 0.05) !important;
   box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
 }
 
-input[type="radio"]#daily:checked + label .ticket-option::before {
+/* Check mark unificato */
+input[type="radio"]#daily:checked+label .ticket-option::before,
+input[type="radio"]#twodays:checked+label .ticket-option::before,
+input[type="radio"]#full:checked+label .ticket-option::before {
   content: "✓";
   position: absolute;
   top: 15px;
@@ -312,71 +139,6 @@ input[type="radio"]#daily:checked + label .ticket-option::before {
   font-size: 14px;
   z-index: 10;
 }
-
-/* Twodays selezionato */
-input[type="radio"]#twodays:checked + label .ticket-option {
-  border-color: var(--primary) !important;
-  background-color: rgba(210, 105, 30, 0.05) !important;
-  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
-}
-
-input[type="radio"]#twodays:checked + label .ticket-option::before {
-  content: "✓";
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: var(--primary);
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 14px;
-  z-index: 10;
-}
-
-/* Full selezionato */
-input[type="radio"]#full:checked + label .ticket-option {
-  border-color: var(--primary) !important;
-  background-color: rgba(210, 105, 30, 0.05) !important;
-  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
-}
-
-input[type="radio"]#full:checked + label .ticket-option::before {
-  content: "✓";
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: var(--primary);
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 14px;
-  z-index: 10;
-}
-
-/* ===== LOGICA GIORNI - RIMANE INVARIATA ===== */
-.checkbox-day { display: inline-block; }
-.radio-day { display: none; }
-
-form:has(input[value="daily"]:checked) .checkbox-day { display: none !important; }
-form:has(input[value="daily"]:checked) .radio-day { display: inline-block !important; }
-
-form:has(input[value="full"]:checked) .day-selection {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-form:has(input[value="2days"]:checked) .checkbox-day { display: inline-block !important; }
-form:has(input[value="2days"]:checked) .radio-day { display: none !important; }
 
 /* ===== STATI DISABILITATI ===== */
 .disabled-ticket {
@@ -389,3 +151,16 @@ label .disabled-ticket:hover {
   box-shadow: none !important;
 }
 
+/* ===== UTILITY ===== */
+.text-site-primary {
+  color: var(--primary) !important;
+}
+
+.badge-container {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.badge-container .badge {
+  margin: 0.25rem;
+}
