@@ -1,10 +1,10 @@
 import sqlite3
 from datetime import datetime
 
-MAX_DAILY_CAPACITY = 200  # Capacità massima giornaliera
+MAX_DAILY_CAPACITY = 200  # Capacità massima giornaliera del festival
 
 def get_user_tickets(user_id):
-    """Get all tickets for a user"""
+    """Recupera tutti i biglietti di un utente. Usato nel profilo partecipante."""
     sql = 'SELECT * FROM tickets WHERE user_id = ?'
     
     conn = sqlite3.connect('db/festival.db')
@@ -20,7 +20,7 @@ def get_user_tickets(user_id):
     return tickets
 
 def add_ticket(ticket_data):
-    """Add new ticket"""
+    """Inserisce nuovo biglietto. Gestisce transazioni per integrità vendita."""
     sql = '''INSERT INTO tickets (user_id, ticket_type, days, price, purchase_date)
              VALUES (?, ?, ?, ?, ?)'''
     
@@ -38,15 +38,15 @@ def add_ticket(ticket_data):
             conn.commit()
             return True
     except sqlite3.Error as e:
-        print(f"SQLite Error in add_ticket: {e}")  # ← AGGIUNGI QUESTO
+        print(f"Errore DB add_ticket: {e}")
         return False
     except Exception as e:
-        print(f"General Error in add_ticket: {e}")  # ← AGGIUNGI QUESTO
+        print(f"Errore generale add_ticket: {e}")
         return False
 
 def get_daily_availability():
-    """Get available tickets for each day"""
-    # Inizializza con tutti i giorni
+    """Calcola posti disponibili per giorno. Ogni biglietto conta una volta per giorno."""
+    # Inizializza capacità massima
     availability = {
         'venerdi': MAX_DAILY_CAPACITY,
         'sabato': MAX_DAILY_CAPACITY, 
@@ -57,34 +57,34 @@ def get_daily_availability():
         conn = sqlite3.connect('db/festival.db')
         cursor = conn.cursor()
         
-        # ← NUOVA LOGICA: Conta ogni biglietto una sola volta per giorno
+        # Recupera tutti i biglietti con giorni validi
         cursor.execute('SELECT ticket_type, days FROM tickets WHERE days IS NOT NULL AND days != ""')
         tickets = cursor.fetchall()
         
-        # Conta i biglietti per ogni giorno
+        # Conteggio per giorno (ogni biglietto conta una volta per giorno coperto)
         day_counts = {'venerdi': 0, 'sabato': 0, 'domenica': 0}
         
         for ticket_type, days in tickets:
             if not days:
                 continue
                 
-            # Dividi i giorni e aggiungi il conteggio
+            # Dividi giorni CSV e incrementa contatori
             ticket_days = [day.strip() for day in days.split(',')]
             for day in ticket_days:
                 if day in day_counts:
                     day_counts[day] += 1
         
-        # Calcola la disponibilità
+        # Calcola disponibilità residua
         for day in availability:
             sold = day_counts[day]
             availability[day] = max(0, MAX_DAILY_CAPACITY - sold)
             
-        # ← DEBUG temporaneo per verificare
-        print(f"DEBUG availability - Day counts: {day_counts}")
-        print(f"DEBUG availability - Final availability: {availability}")
+        # Debug per monitoraggio vendite
+        print(f"DEBUG availability - Venduti: {day_counts}")
+        print(f"DEBUG availability - Disponibili: {availability}")
                     
     except sqlite3.Error as e:
-        print(f"Error in get_daily_availability: {e}")
+        print(f"Errore calcolo disponibilità: {e}")
     finally:
         cursor.close()
         conn.close()
@@ -92,7 +92,7 @@ def get_daily_availability():
     return availability
 
 def check_availability(ticket_type, selected_days):
-    """Check ticket availability"""
+    """Verifica disponibilità biglietti per tipo specifico."""
     availability = get_daily_availability()
     
     if ticket_type == 'daily':
@@ -115,15 +115,14 @@ def check_availability(ticket_type, selected_days):
     
     return False
 
-
 def can_purchase_ticket(user_id, ticket_type, selected_days):
-    """Check if user can purchase a specific ticket type"""
+    """Valida regole business acquisto biglietti. Previene conflitti e duplicati."""
     conn = sqlite3.connect('db/festival.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
     try:
-        # Validazioni specifiche per tipo di biglietto
+        # Validazioni specifiche per tipo biglietto
         if ticket_type == 'daily':
             if len(selected_days) == 0:
                 return False, "Seleziona almeno un giorno per il biglietto giornaliero."
@@ -133,34 +132,34 @@ def can_purchase_ticket(user_id, ticket_type, selected_days):
             if len(selected_days) != 2:
                 return False, "Per il pass 2 giorni devi selezionare esattamente 2 giorni."
         
-        # Get all user's existing tickets
+        # Recupera biglietti esistenti dell'utente
         cursor.execute('SELECT ticket_type, days FROM tickets WHERE user_id = ?', (user_id,))
         existing_tickets = cursor.fetchall()
         
         if not existing_tickets:
             return True, "OK"
         
-        # Check existing ticket types
+        # Verifica pass multi-giorno esistenti
         has_multi_day = any(ticket[0] in ['2days', 'full'] for ticket in existing_tickets)
         
         if has_multi_day:
             return False, "Hai già un pass multi-giorno. Non puoi acquistare altri biglietti."
         
-        # If requesting multi-day ticket but has daily tickets
+        # Impedisce acquisto pass se ha biglietti giornalieri
         if ticket_type in ['2days', 'full'] and existing_tickets:
             return False, "Hai già biglietti giornalieri. Non puoi acquistare un pass multi-giorno."
         
-        # If requesting daily ticket, check for day conflicts
+        # Per biglietti giornalieri: verifica conflitti giorni
         if ticket_type == 'daily':
             existing_days = set()
             for ticket in existing_tickets:
-                if ticket[1]:  # days field not empty
+                if ticket[1]:  # Campo days non vuoto
                     existing_days.update(ticket[1].split(','))
             
-            # Check if any selected day is already covered
+            # Controlla sovrapposizioni per giorno selezionato
             for day in selected_days:
                 if day in existing_days:
-                    day_names = {'venerdi': 'Venerdì', 'sabato': 'Sabato', 'domenica': 'Domenica'}  # ← Cambiato
+                    day_names = {'venerdi': 'Venerdì', 'sabato': 'Sabato', 'domenica': 'Domenica'}
                     return False, f"Hai già un biglietto per {day_names.get(day, day)}."
             
             return True, "OK"
@@ -168,14 +167,14 @@ def can_purchase_ticket(user_id, ticket_type, selected_days):
         return True, "OK"
         
     except Exception as e:
-        print(f"Error checking ticket purchase eligibility: {e}")
+        print(f"Errore validazione acquisto: {e}")
         return False, "Errore durante la verifica"
     finally:
         cursor.close()
         conn.close()
 
 def get_user_covered_days(user_id):
-    """Get all days already covered by user's tickets"""
+    """Restituisce giorni già coperti dai biglietti utente. Per UI form acquisto."""
     sql = 'SELECT ticket_type, days FROM tickets WHERE user_id = ?'
     
     conn = sqlite3.connect('db/festival.db')
@@ -190,8 +189,9 @@ def get_user_covered_days(user_id):
         for ticket in tickets:
             ticket_type, days = ticket[0], ticket[1]
             
+            # Full pass copre automaticamente tutti i giorni
             if ticket_type == 'full':
-                covered_days.update(['venerdi', 'sabato', 'domenica'])  # ← Cambiato
+                covered_days.update(['venerdi', 'sabato', 'domenica'])
             elif ticket_type == '2days' and days:
                 covered_days.update(days.split(','))
             elif ticket_type == 'daily' and days:
@@ -200,29 +200,29 @@ def get_user_covered_days(user_id):
         return covered_days
         
     except Exception as e:
-        print(f"Error getting covered days: {e}")
+        print(f"Errore recupero giorni coperti: {e}")
         return set()
     finally:
         cursor.close()
         conn.close()
 
 def get_festival_stats():
-    """Get general festival ticket sales statistics"""
+    """Genera statistiche vendite per dashboard organizzatori."""
     conn = sqlite3.connect('db/festival.db')
     cursor = conn.cursor()
     
     try:
-        # ← Statistiche generali del festival
+        # Metriche totali festival
         cursor.execute('SELECT COUNT(*), SUM(price) FROM tickets')
         total_tickets, total_revenue = cursor.fetchone()
         
-        # ← Vendite per tipo di biglietto
+        # Breakdown per tipo biglietto
         cursor.execute('''SELECT ticket_type, COUNT(*) 
                           FROM tickets 
                           GROUP BY ticket_type''')
         by_type_data = cursor.fetchall()
         
-        # ← Vendite per giorno del festival
+        # Analisi partecipazione per giorno (query aggregata)
         cursor.execute('''SELECT 
                             SUM(CASE WHEN days LIKE '%venerdi%' THEN 1 ELSE 0 END) as venerdi,
                             SUM(CASE WHEN days LIKE '%sabato%' THEN 1 ELSE 0 END) as sabato,
@@ -232,7 +232,7 @@ def get_festival_stats():
                        ''')
         day_stats = cursor.fetchone()
         
-        # ← Formatta i dati
+        # Formattazione dati per dashboard
         by_type = {
             'daily': 0,
             '2days': 0,
@@ -258,6 +258,7 @@ def get_festival_stats():
         }
         
     except sqlite3.Error:
+        # Fallback con valori di default per robustezza
         return {
             'total_tickets': 0,
             'total_revenue': "0.00",

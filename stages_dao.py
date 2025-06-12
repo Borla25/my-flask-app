@@ -1,7 +1,7 @@
 import sqlite3
 
 def get_all_stages():
-    """Get all stages"""
+    """Recupera tutti i palchi ordinati alfabeticamente per interfaccia utente."""
     query = '''SELECT id, name, capacity, description, created_at
                FROM stages
                ORDER BY name'''
@@ -20,7 +20,7 @@ def get_all_stages():
 
 
 def get_stage_by_name(name):
-    """Get stage by name"""
+    """Recupera palco specifico per nome. Usato per validazione form."""
     query = '''SELECT id, name, capacity, description, created_at
                FROM stages
                WHERE name = ?'''

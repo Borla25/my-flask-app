@@ -2,9 +2,9 @@ import sqlite3
 from datetime import datetime, timedelta
 
 def get_published_performances(day_filter='', stage_filter='', genre_filter=''):
-    """Get all published performances with optional filters - OTTIMIZZATA"""
+    """Recupera performance pubblicate con filtri opzionali."""
     
-    # SELECT solo i campi necessari per la home
+    # Query con JOIN ottimizzato per performance
     query = '''SELECT p.id, p.artist_name, p.description, p.day, p.start_time, 
                       p.duration, p.genre, p.performance_image, s.name as stage_name
                FROM performances p 
@@ -12,6 +12,7 @@ def get_published_performances(day_filter='', stage_filter='', genre_filter=''):
                WHERE p.published = 1'''
     params = []
     
+    # Costruzione dinamica con prepared statements
     if day_filter:
         query += ' AND p.day = ?'
         params.append(day_filter)
@@ -24,7 +25,7 @@ def get_published_performances(day_filter='', stage_filter='', genre_filter=''):
         query += ' AND p.genre = ?'
         params.append(genre_filter)
     
-    # Ordinamento ottimizzato + LIMIT
+    # Ordinamento cronologico con limite per performance
     query += ''' ORDER BY p.day ASC, p.start_time ASC LIMIT 50'''
     
     conn = sqlite3.connect('db/festival.db')
@@ -39,7 +40,7 @@ def get_published_performances(day_filter='', stage_filter='', genre_filter=''):
     return performances
 
 def get_performance(performance_id):
-    """Get single performance by ID"""
+    """Recupera singola performance con dati organizzatore."""
     sql = '''SELECT p.*, u.full_name as organizer_name 
              FROM performances p 
              JOIN users u ON p.organizer_id = u.id 
@@ -57,13 +58,13 @@ def get_performance(performance_id):
     return performance
 
 def get_organizer_performances(organizer_id):
-    """Get all performances for a specific organizer"""
+    """Recupera performance di un organizzatore. Bozze prima, poi cronologico."""
     sql = '''SELECT p.*, s.name as stage_name 
              FROM performances p 
              JOIN stages s ON p.stage_id = s.id 
              WHERE p.organizer_id = ?
              ORDER BY 
-                p.published ASC,
+                p.published ASC,    -- Bozze prima (0 < 1)
                 p.day ASC,
                 p.start_time ASC'''
     
@@ -79,23 +80,21 @@ def get_organizer_performances(organizer_id):
     return performances
 
 def add_performance(performance_data):
-    """Add new performance"""
+    """Inserisce nuova performance. Normalizza i giorni in formato ISO."""
     sql = '''INSERT INTO performances 
              (artist_name, day, start_time, duration, description, stage_id, genre, 
               performance_image, organizer_id, published)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
     
-    # ← NORMALIZZA IL FORMATO DELLA DATA
     day = performance_data['day']
     
-    # Converti nomi giorni in date ISO se necessario
+    # Normalizzazione formato data
     day_mapping = {
-        'venerdi': '2025-07-12',    # ← 2025 invece di 2024
-        'sabato': '2025-07-13',     # ← 2025 invece di 2024
-        'domenica': '2025-07-14'    # ← 2025 invece di 2024
+        'venerdi': '2025-07-12',    
+        'sabato': '2025-07-13',    
+        'domenica': '2025-07-14'    
     }
     
-    # Se è un nome giorno, convertilo in data ISO
     if day in day_mapping:
         day = day_mapping[day]
     
@@ -103,7 +102,7 @@ def add_performance(performance_data):
     cursor = conn.cursor()
     
     try:
-        cursor.execute(sql, (performance_data['artist_name'], day,  # ← USA day NORMALIZZATO
+        cursor.execute(sql, (performance_data['artist_name'], day,  
                            performance_data['start_time'], performance_data['duration'],
                            performance_data['description'], performance_data['stage_id'],
                            performance_data['genre'], performance_data.get('performance_image', ''),
@@ -117,19 +116,16 @@ def add_performance(performance_data):
         conn.close()
 
 def update_performance(performance_data):
-    """Update existing performance"""
-    
-    # ← AGGIUNGI LA NORMALIZZAZIONE DELLA DATA
+    """Aggiorna performance. Due query: con/senza immagine per ottimizzare."""
     day = performance_data['day']
     
-    # Converti nomi giorni in date ISO se necessario
+    # Stessa normalizzazione di add_performance
     day_mapping = {
-        'venerdi': '2025-07-12',    # ← 2025 invece di 2024
-        'sabato': '2025-07-13',     # ← 2025 invece di 2024
-        'domenica': '2025-07-14'    # ← 2025 invece di 2024
+        'venerdi': '2025-07-12',   
+        'sabato': '2025-07-13',    
+        'domenica': '2025-07-14'   
     }
     
-    # Se è un nome giorno, convertilo in data ISO
     if day in day_mapping:
         day = day_mapping[day]
     
@@ -137,22 +133,24 @@ def update_performance(performance_data):
     cursor = conn.cursor()
     
     try:
+        # Query condizionale per gestione immagine
         if 'performance_image' in performance_data and performance_data['performance_image']:
             sql = '''UPDATE performances SET 
                      artist_name=?, day=?, start_time=?, duration=?, description=?, 
                      stage_id=?, genre=?, performance_image=?
                      WHERE id=?'''
-            cursor.execute(sql, (performance_data['artist_name'], day,  # ← USA day NORMALIZZATO
+            cursor.execute(sql, (performance_data['artist_name'], day,
                                performance_data['start_time'], performance_data['duration'],
                                performance_data['description'], performance_data['stage_id'],
                                performance_data['genre'], performance_data['performance_image'],
                                performance_data['id']))
         else:
+            # Preserva immagine esistente
             sql = '''UPDATE performances SET 
                      artist_name=?, day=?, start_time=?, duration=?, description=?, 
                      stage_id=?, genre=?
                      WHERE id=?'''
-            cursor.execute(sql, (performance_data['artist_name'], day,  # ← USA day NORMALIZZATO
+            cursor.execute(sql, (performance_data['artist_name'], day,
                                performance_data['start_time'], performance_data['duration'],
                                performance_data['description'], performance_data['stage_id'],
                                performance_data['genre'], performance_data['id']))
@@ -165,13 +163,13 @@ def update_performance(performance_data):
         conn.close()
 
 def publish_performance(performance_id):
-    """Publish a performance after checking for conflicts"""
+    """Pubblica performance dopo controllo conflitti orari."""
     conn = sqlite3.connect('db/festival.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
     try:
-        # Get performance details
+        # Recupera dati per controllo conflitti
         sql = '''SELECT day, start_time, duration, stage_id, artist_name
                  FROM performances 
                  WHERE id = ? AND published = 0'''
@@ -183,12 +181,12 @@ def publish_performance(performance_id):
         
         day, start_time, duration, stage_id, artist_name = performance
         
-        # Check for conflicts with published performances
+        # Verifica conflitti con performance pubblicate
         if check_conflict(stage_id, day, start_time, duration):
-            print(f"Cannot publish {artist_name}: time conflict detected")
+            print(f"Impossibile pubblicare {artist_name}: conflitto orario")
             return False
         
-        # Publish the performance
+        # Procede con pubblicazione
         sql_update = '''UPDATE performances 
                         SET published = 1
                         WHERE id = ?'''
@@ -198,24 +196,24 @@ def publish_performance(performance_id):
         return True
         
     except Exception as e:
-        print(f"Error publishing performance: {e}")
+        print(f"Errore pubblicazione: {e}")
         return False
     finally:
         cursor.close()
         conn.close()
 
 def check_conflict(stage_id, day, start_time, duration):
-    """Check if there's a time conflict for the same stage"""
+    """Verifica sovrapposizioni orarie sullo stesso palco."""
     conn = sqlite3.connect('db/festival.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     
-    # Calcola l'orario di fine della nuova performance
+    # Calcolo orario fine per logica sovrapposizione
     start_datetime = datetime.strptime(start_time, "%H:%M")
     end_datetime = start_datetime + timedelta(minutes=int(duration))
     end_time = end_datetime.strftime("%H:%M")
     
-    # Controlla conflitti
+    # Logica sovrapposizione: due performance NON si sovrappongono se una finisce prima che inizi l'altra
     sql = '''SELECT * FROM performances 
              WHERE stage_id = ? AND day = ? AND published = 1 AND
              NOT (? >= time(start_time, '+' || duration || ' minutes') OR 
@@ -229,7 +227,7 @@ def check_conflict(stage_id, day, start_time, duration):
     return len(conflicts) > 0
 
 def check_conflict_exclude(stage_id, day, start_time, duration, exclude_id):
-    """Check conflicts excluding a specific performance ID"""
+    """Come check_conflict ma esclude performance specifica (per modifiche)."""
     conn = sqlite3.connect('db/festival.db')
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -238,6 +236,7 @@ def check_conflict_exclude(stage_id, day, start_time, duration, exclude_id):
     end_datetime = start_datetime + timedelta(minutes=int(duration))
     end_time = end_datetime.strftime("%H:%M")
     
+    # Stessa logica con esclusione per ID
     sql = '''SELECT * FROM performances 
              WHERE stage_id = ? AND day = ? AND published = 1 AND id != ? AND
              NOT (? >= time(start_time, '+' || duration || ' minutes') OR 
@@ -251,7 +250,7 @@ def check_conflict_exclude(stage_id, day, start_time, duration, exclude_id):
     return len(conflicts) > 0
 
 def artist_exists(artist_name):
-    """Check if artist already has a performance"""
+    """Verifica unicità artista (regola business: un artista = una performance)."""
     sql = 'SELECT * FROM performances WHERE artist_name = ?'
     
     conn = sqlite3.connect('db/festival.db')
@@ -266,7 +265,7 @@ def artist_exists(artist_name):
     return artist is not None
 
 def delete_performance(performance_id):
-    """Delete a performance (only if not published)"""
+    """Elimina solo bozze (published=0) per proteggere programma pubblicato."""
     sql = 'DELETE FROM performances WHERE id = ? AND published = 0'
     
     conn = sqlite3.connect('db/festival.db')
@@ -275,7 +274,8 @@ def delete_performance(performance_id):
     try:
         cursor.execute(sql, (performance_id,))
         conn.commit()
-        return cursor.rowcount > 0  # Returns True if a row was deleted
+        # rowcount > 0 = eliminazione avvenuta
+        return cursor.rowcount > 0
     except sqlite3.Error:
         return False
     finally:
