@@ -25,10 +25,17 @@
   color: white !important;
 }
 
-.festival-header,
-.festival-header * {
+.festival-header {
   background: var(--gradient-primary) !important;
   color: white !important;
+}
+
+/* Assicurati che tutti gli elementi figli ereditino il colore bianco */
+.festival-header * {
+  color: inherit !important;
+  /* Eredita il bianco dal parent */
+  background: transparent !important;
+  /* Sfondo trasparente */
 }
 
 /* Badge con gradienti */
