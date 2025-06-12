@@ -26,92 +26,44 @@ content %}
             <fieldset class="mb-4">
               <legend class="h5 mb-3">Scegli il tipo di biglietto:</legend>
 
-              <!-- Input radio FUORI dalle card per CSS -->
-              <input
-                type="radio"
-                id="daily"
-                name="ticket_type"
-                value="daily"
-                {%
-                if
-                has_multi_day
-                %}disabled{%
-                endif
-                %}
-                style="display: none"
-              />
-              <input
-                type="radio"
-                id="twodays"
-                name="ticket_type"
-                value="2days"
-                {%
-                if
-                existing_tickets
-                %}disabled{%
-                endif
-                %}
-                style="display: none"
-              />
-              <input
-                type="radio"
-                id="full"
-                name="ticket_type"
-                value="full"
-                {%
-                if
-                existing_tickets
-                %}disabled{%
-                endif
-                %}
-                style="display: none"
-              />
-
               <div class="row">
                 <!-- ✅ USA I DATI DAL CONTROLLER -->
                 {% for ticket in ticket_types %}
                 <div class="col-md-4 mb-3">
-                  <div
-                    class="card h-100 ticket-option {% if ticket.disabled %}disabled-ticket{% endif %}"
-                  >
-                    <div class="card-body text-center p-4 d-flex flex-column">
-                      <label
-                        for="{{ ticket.id }}"
-                        class="card-title w-100 {% if ticket.disabled %}text-muted{% endif %}"
-                      >
-                        <h2 class="h5 mb-3">
-                          {{ ticket.title }} {% if ticket.disabled %}
-                          <i
-                            class="fas fa-lock ms-2 text-muted"
-                            title="Non disponibile"
-                          ></i>
+                  <!-- ✅ AGGIUNGI: Input radio DENTRO ogni card -->
+                  <input type="radio" id="{{ ticket.id }}" name="ticket_type" value="{{ ticket.value }}"
+                    {% if ticket.disabled %}disabled{% endif %} style="display: none" />
+
+                  <label for="{{ ticket.id }}" class="w-100">
+                    <div class="card h-100 ticket-option {% if ticket.disabled %}disabled-ticket{% endif %}">
+                      <div class="card-body text-center p-4 d-flex flex-column">
+                        <h2 class="h5 mb-3 {% if ticket.disabled %}text-muted{% endif %}">
+                          {{ ticket.title }}
+                          {% if ticket.disabled %}
+                          <i class="fas fa-lock ms-2 text-muted" title="Non disponibile"></i>
                           {% endif %}
                         </h2>
-                      </label>
 
-                      <p
-                        class="card-text mb-3 flex-grow-1 {% if ticket.disabled %}text-muted{% endif %}"
-                      >
-                        {% if ticket.disabled %} Non disponibile - {{
-                        ticket.disabled_reason }} {% else %} {{
-                        ticket.description }} {% endif %}
-                      </p>
+                        <p class="card-text mb-3 flex-grow-1 {% if ticket.disabled %}text-muted{% endif %}">
+                          {% if ticket.disabled %}
+                          Non disponibile - {{ ticket.disabled_reason }}
+                          {% else %}
+                          {{ ticket.description }}
+                          {% endif %}
+                        </p>
 
-                      <div class="mt-auto">
-                        <strong
-                          class="price text-primary h4 d-block {% if ticket.disabled %}text-muted{% endif %}"
-                        >
-                          €{{ ticket.price }}
-                        </strong>
+                        <div class="mt-auto">
+                          <strong class="price text-primary h4 d-block {% if ticket.disabled %}text-muted{% endif %}">
+                            €{{ ticket.price }}
+                          </strong>
 
-                        {% if not ticket.disabled and ticket.discount %}
-                        <small class="text-muted"
-                          >Risparmia €{{ ticket.discount }}!</small
-                        >
-                        {% endif %}
+                          {% if not ticket.disabled and ticket.discount %}
+                          <small class="text-muted">Risparmia €{{ ticket.discount }}!</small>
+                          {% endif %}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </label>
                 </div>
                 {% endfor %}
               </div>
@@ -128,45 +80,15 @@ content %}
                   {% for day in festival_days %}
                   <div class="col-md-4">
                     <div
-                      class="form-check p-3 border rounded mb-2 {% if day.value in covered_days %}bg-light{% endif %}"
-                    >
-                      <input
-                        class="form-check-input checkbox-day"
-                        type="checkbox"
-                        id="{{ day.id_prefix }}_check"
-                        name="days"
-                        value="{{ day.value }}"
-                        {%
-                        if
-                        day.value
-                        in
-                        covered_days
-                        %}disabled{%
-                        endif
-                        %}
-                      />
+                      class="form-check p-3 border rounded mb-2 {% if day.value in covered_days %}bg-light{% endif %}">
+                      <input class="form-check-input checkbox-day" type="checkbox" id="{{ day.id_prefix }}_check"
+                        name="days" value="{{ day.value }}" {% if day.value in covered_days %}disabled{% endif %} />
 
-                      <input
-                        class="form-check-input radio-day"
-                        type="radio"
-                        id="{{ day.id_prefix }}_radio"
-                        name="single_day"
-                        value="{{ day.value }}"
-                        {%
-                        if
-                        day.value
-                        in
-                        covered_days
-                        %}disabled{%
-                        endif
-                        %}
-                        style="display: none"
-                      />
+                      <input class="form-check-input radio-day" type="radio" id="{{ day.id_prefix }}_radio"
+                        name="single_day" value="{{ day.value }}" {% if day.value in covered_days %}disabled{% endif %}
+                        style="display: none" />
 
-                      <label
-                        class="form-check-label w-100"
-                        for="{{ day.id_prefix }}_check"
-                      >
+                      <label class="form-check-label w-100" for="{{ day.id_prefix }}_check">
                         <strong class="d-block">
                           {{ day.label }} {% if day.value in covered_days %}
                           <i class="fas fa-check-circle text-success ms-1"></i>

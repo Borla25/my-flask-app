@@ -269,3 +269,123 @@ form:has(input[value="2days"]:checked) .radio-day {
   cursor: not-allowed !important;
 }
 
+/* ===== SISTEMA SELEZIONE BIGLIETTI - MOBILE FRIENDLY ===== */
+
+/* Label che wrappa tutta la card */
+label .ticket-option {
+  border: 2px solid #dee2e6;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  background-color: white;
+}
+
+/* Hover effect */
+label:hover .ticket-option:not(.disabled-ticket) {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(210, 105, 30, 0.15);
+}
+
+/* ===== STATI SELEZIONATI - MOBILE FRIENDLY ===== */
+
+/* Daily selezionato */
+input[type="radio"]#daily:checked + label .ticket-option {
+  border-color: var(--primary) !important;
+  background-color: rgba(210, 105, 30, 0.05) !important;
+  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
+}
+
+input[type="radio"]#daily:checked + label .ticket-option::before {
+  content: "✓";
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--primary);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 10;
+}
+
+/* Twodays selezionato */
+input[type="radio"]#twodays:checked + label .ticket-option {
+  border-color: var(--primary) !important;
+  background-color: rgba(210, 105, 30, 0.05) !important;
+  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
+}
+
+input[type="radio"]#twodays:checked + label .ticket-option::before {
+  content: "✓";
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--primary);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 10;
+}
+
+/* Full selezionato */
+input[type="radio"]#full:checked + label .ticket-option {
+  border-color: var(--primary) !important;
+  background-color: rgba(210, 105, 30, 0.05) !important;
+  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
+}
+
+input[type="radio"]#full:checked + label .ticket-option::before {
+  content: "✓";
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--primary);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 10;
+}
+
+/* ===== LOGICA GIORNI - RIMANE INVARIATA ===== */
+.checkbox-day { display: inline-block; }
+.radio-day { display: none; }
+
+form:has(input[value="daily"]:checked) .checkbox-day { display: none !important; }
+form:has(input[value="daily"]:checked) .radio-day { display: inline-block !important; }
+
+form:has(input[value="full"]:checked) .day-selection {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+form:has(input[value="2days"]:checked) .checkbox-day { display: inline-block !important; }
+form:has(input[value="2days"]:checked) .radio-day { display: none !important; }
+
+/* ===== STATI DISABILITATI ===== */
+.disabled-ticket {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+
+label .disabled-ticket:hover {
+  border-color: #dee2e6 !important;
+  box-shadow: none !important;
+}
+
