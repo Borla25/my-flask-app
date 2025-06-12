@@ -149,6 +149,7 @@ form:has(input[value="2days"]:checked) .radio-day {
   transition: all 0.3s ease;     /* Transizione fluida per tutti i cambiamenti */
   cursor: pointer;               /* Cursore a mano per indicare interattività */
   position: relative;            /* Necessario per il posizionamento del check mark */
+  background-color: white;       /* ✅ AGGIUNTO: sfondo bianco di default */
 }
 
 /* Effetto hover sulle card biglietto (solo se non disabilitate) */
@@ -157,38 +158,94 @@ form:has(input[value="2days"]:checked) .radio-day {
   box-shadow: 0 4px 12px rgba(210, 105, 30, 0.15);  /* Ombra arancione sottile */
 }
 
-/* ===== STATI SELEZIONATI PER OGNI TIPO DI BIGLIETTO ===== */
+/* Reset: tutte le card ticket-option hanno stili di default */
+.ticket-option {
+  border: 2px solid #dee2e6;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  background-color: white; /* ✅ AGGIUNTO: sfondo bianco di default */
+}
 
-/* Card selezionata - applica stili quando il radio button corrispondente è checked */
-#daily:checked ~ .row .ticket-option:has(label[for="daily"]),
-#twodays:checked ~ .row .ticket-option:has(label[for="twodays"]),
+/* ✅ NUOVO: Nasconde tutti i check mark di default */
+.ticket-option::before {
+  display: none;
+}
+
+/* Card selezionata SOLO quando il corrispondente radio è checked */
+#daily:checked ~ .row .ticket-option:has(label[for="daily"]) {
+  border-color: var(--primary) !important;
+  background-color: rgba(210, 105, 30, 0.05) !important;
+  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
+}
+
+#twodays:checked ~ .row .ticket-option:has(label[for="twodays"]) {
+  border-color: var(--primary) !important;
+  background-color: rgba(210, 105, 30, 0.05) !important;
+  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
+}
+
 #full:checked ~ .row .ticket-option:has(label[for="full"]) {
-  border-color: var(--primary) !important;           /* Bordo arancione forte */
-  background-color: rgba(210, 105, 30, 0.05);        /* Sfondo arancione molto tenue */
-  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);    /* Ombra arancione più marcata */
+  border-color: var(--primary) !important;
+  background-color: rgba(210, 105, 30, 0.05) !important;
+  box-shadow: 0 4px 16px rgba(210, 105, 30, 0.2);
 }
 
 /* ===== INDICATORE VISIVO DI SELEZIONE ===== */
 
-/* Check mark circolare nell'angolo in alto a destra delle card selezionate */
-#daily:checked ~ .row .ticket-option:has(label[for="daily"])::before,
-#twodays:checked ~ .row .ticket-option:has(label[for="twodays"])::before,
+/* Check mark SOLO per la card corrispondente al radio checked */
+#daily:checked ~ .row .ticket-option:has(label[for="daily"])::before {
+  content: "✓";
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--primary);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex !important; /* ✅ FORZA LA VISUALIZZAZIONE */
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 10;
+}
+
+#twodays:checked ~ .row .ticket-option:has(label[for="twodays"])::before {
+  content: "✓";
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--primary);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex !important; /* ✅ FORZA LA VISUALIZZAZIONE */
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 10;
+}
+
 #full:checked ~ .row .ticket-option:has(label[for="full"])::before {
-  content: "✓";                    /* Simbolo di spunta */
-  position: absolute;              /* Posizionamento assoluto */
-  top: 15px;                       /* 15px dall'alto */
-  right: 15px;                     /* 15px da destra */
-  background: var(--primary);      /* Sfondo arancione */
-  color: white;                    /* Testo bianco */
-  width: 24px;                     /* Larghezza cerchio */
-  height: 24px;                    /* Altezza cerchio */
-  border-radius: 50%;              /* Forma circolare */
-  display: flex;                   /* Flexbox per centrare il contenuto */
-  align-items: center;             /* Centra verticalmente */
-  justify-content: center;         /* Centra orizzontalmente */
-  font-weight: bold;               /* Testo in grassetto */
-  font-size: 14px;                 /* Dimensione font */
-  z-index: 10;                     /* Sopra altri elementi */
+  content: "✓";
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--primary);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex !important; /* ✅ FORZA LA VISUALIZZAZIONE */
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 10;
 }
 
 /* ===== STATI DISABILITATI ===== */
