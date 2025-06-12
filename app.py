@@ -63,7 +63,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def save_image(file, prefix):
-    """Salva l'immagine ridimensionandola/tagliandola a 600px di altezza se necessario."""
+    """Salva l'immagine ridimensionandola/tagliandola a 1200px di altezza se necessario."""
     if file and allowed_file(file.filename):
         from PIL import Image
         import os
@@ -73,15 +73,15 @@ def save_image(file, prefix):
         img = Image.open(file)
 
         # Controlla altezza minima
-        if img.height < 600:
-            return None, "L'immagine deve essere alta almeno 600px"
+        if img.height < 1200:
+            return None, "L'immagine deve essere alta almeno 1200px"
 
-        # Se più alta di 600px, taglia (crop) centralmente
-        if img.height > 600:
+        # Se più alta di 1200px, taglia (crop) centralmente
+        if img.height > 1200:
             left = 0
-            upper = (img.height - 600) // 2
+            upper = (img.height - 1200) // 2
             right = img.width
-            lower = upper + 600
+            lower = upper + 1200
             img = img.crop((left, upper, right, lower))
 
         # Salva come WebP
