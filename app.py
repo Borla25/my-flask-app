@@ -571,14 +571,6 @@ def delete_performance_route(id):
     
     return redirect(url_for("profile"))
 
-@app.route("/my_performances")
-@login_required
-def my_performances():
-    if current_user.user_type != 'organizer':
-        abort(403)
-    performances = performances_dao.get_organizer_performances(current_user.id)
-    return render_template("my_performances.html", performances=performances)
-
 @login_manager.user_loader
 def load_user(user_id):
     """Callback Flask-Login per ricaricare utente dalla sessione"""
