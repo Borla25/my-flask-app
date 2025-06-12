@@ -168,9 +168,8 @@
                             {% if performance.performance_image %}
                             <div class="mb-3">
                                 <img src="{{ url_for('static', filename='uploads/' + performance.performance_image) }}"
-                                    class="img-thumbnail shadow-sm"
-                                    alt="Immagine attuale della performance {{ performance.artist_name }}"
-                                    style="height: 200px; object-fit: cover; width: 100%;">
+                                    class="card-img-top performance-image" alt="{{ performance.artist_name }}"
+                                    loading="lazy">
                                 <div class="small text-muted mt-1">Immagine attuale</div>
                             </div>
                             {% endif %}

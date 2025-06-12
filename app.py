@@ -63,30 +63,38 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def save_image(file, prefix):
-    """Salva l'immagine ridimensionandola/tagliandola a 1200px di altezza se necessario."""
+    """Salva l'immagine ridimensionandola e tagliandola a 1000x750px (crop centrale)."""
     if file and allowed_file(file.filename):
         from PIL import Image
         import os
         filename = file.filename
         timestamp = int(datetime.now().timestamp())
         new_filename = f"{prefix}_{timestamp}.webp"
-        img = Image.open(file)
+        img = Image.open(file).convert("RGB")
 
-        # Controlla altezza minima
-        if img.height < 1200:
-            return None, "L'immagine deve essere alta almeno 1200px"
+        # Crop centrale
+        target_width = 450
+        target_height = 450
+        aspect_ratio = target_width / target_height
+        img_ratio = img.width / img.height
 
-        # Se più alta di 1200px, taglia (crop) centralmente
-        if img.height > 1200:
-            left = 0
-            upper = (img.height - 1200) // 2
-            right = img.width
-            lower = upper + 1200
-            img = img.crop((left, upper, right, lower))
+        # Crop per mantenere proporzione
+        if img_ratio > aspect_ratio:
+            # Immagine troppo larga
+            new_width = int(img.height * aspect_ratio)
+            left = (img.width - new_width) // 2
+            img = img.crop((left, 0, left + new_width, img.height))
+        else:
+            # Immagine troppo alta
+            new_height = int(img.width / aspect_ratio)
+            top = (img.height - new_height) // 2
+            img = img.crop((0, top, img.width, top + new_height))
 
-        # Salva come WebP
+        # Resize finale
+        img = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
+
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
-        img.save(filepath, "WebP", quality=60, optimize=True)
+        img.save(filepath, "WebP", quality=50, optimize=True)
         return new_filename, None
 
     return None, "File non valido"
@@ -438,7 +446,7 @@ def new_performance_post():
         return redirect(url_for("profile"))
     else:
         flash("Errore durante la creazione della performance", "danger")
-        return redirect(url_for("new_performance"))
+        return redirect(url_for ("new_performance"))
 
 @app.route("/edit_performance/<int:id>")
 @login_required

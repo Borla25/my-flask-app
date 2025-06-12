@@ -16,8 +16,7 @@ block content %} {% set stage_names = { 1: 'Main Stage', 2: 'Secondary Stage',
         {% if performance.performance_image %}
         <!-- Immagine caricata dall'organizzatore con dimensioni fisse -->
         <img src="{{ url_for('static', filename='uploads/' + performance.performance_image) }}"
-          class="card-img-top performance-detail-image rounded"
-          alt="Immagine promozionale di {{ performance.artist_name }}" style="height: 300px; object-fit: cover" />
+          class="card-img-top performance-image" alt="{{ performance.artist_name }}" loading="lazy">
         {% else %}
         <!-- Placeholder con icona musicale se non c'è immagine -->
         <div
