@@ -1,205 +1,164 @@
-# 🎵 Harmony Valley Festival - Web Application
+# 🎵 Madness Festival - Web Application
 
-Applicazione web per la gestione del festival musicale "Harmony Valley" sviluppata con Flask, SQLite e tecnologie web moderne.
+Applicazione web per la gestione del festival musicale "Madness Festival" sviluppata con Flask, SQLite e tecnologie web moderne.
 
 ## 📋 Caratteristiche
 
 ### ✨ Funzionalità Principali
+
 - **Gestione Utenti**: Registrazione e autenticazione con Flask-Login
 - **Due tipi di utenti**: Partecipanti e Organizzatori
 - **Gestione Performance**: Creazione, modifica e pubblicazione di performance musicali
-- **Sistema Biglietti**: Acquisto di biglietti con diverse tipologie
+- **Sistema Biglietti**: Acquisto di biglietti con diverse tipologie e controllo disponibilità
 - **Filtri Avanzati**: Ricerca per giorno, palco e genere musicale
 - **Design Responsivo**: Compatibile con desktop, tablet e mobile
-- **Upload Immagini**: Gestione immagini per profili e performance
+- **Upload Immagini**: Gestione immagini obbligatorie per performance
 
 ### 🎫 Tipi di Biglietti
-- **Giornaliero**: €50 (valido per un giorno)
-- **Pass 2 Giorni**: €85 (due giorni consecutivi)
-- **Full Pass**: €120 (tutti e tre i giorni)
+
+- **Giornaliero**: €50 (valido per un giorno specifico)
+- **Pass 2 Giorni**: €90 (due giorni consecutivi con sconto €10)
+- **Full Pass**: €130 (tutti e tre i giorni con sconto €20)
 
 ### 🎤 Palchi Disponibili
-- Main Stage
-- Secondary Stage
-- Experimental Stage
 
-## 🛠 Installazione
+- Main Stage (Capacità: 1000)
+- Secondary Stage (Capacità: 500)
+- Experimental Stage (Capacità: 200)
 
-### Prerequisiti
-- Python 3.8+
-- pip (package manager Python)
-
-### Setup
-1. **Clona o scarica il progetto**
-   ```bash
-   # Se hai git
-   git clone <repository-url>
-   cd harmony-valley-festival
-   ```
-
-2. **Crea ambiente virtuale (raccomandato)**
-   ```bash
-   python -m venv venv
-   
-   # Su Windows
-   venv\Scripts\activate
-   
-   # Su macOS/Linux
-   source venv/bin/activate
-   ```
-
-3. **Installa dipendenze**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Avvia l'applicazione**
-   ```bash
-   python run.py
-   ```
-
-5. **Apri il browser**
-   ```
-   http://localhost:3000
-   ```
-
-## 👥 Account di Test
+## 👥 Credenziali di Test
 
 L'applicazione include account preconfigurati per il testing:
 
-### Organizzatori
-- **Email**: marco.rossi@email.com | **Password**: password123
-- **Email**: giulia.verdi@email.com | **Password**: password123
+### 🎼 Organizzatori
 
-### Partecipanti
-- **Email**: luca.bianchi@email.com | **Password**: password123
-- **Email**: sara.ferrari@email.com | **Password**: password123
-- **Email**: andrea.neri@email.com | **Password**: password123
+- **Email**: `marco.rossi@email.com` | **Password**: `password123`
+- **Email**: `giulia.verdi@email.com` | **Password**: `password123`
+
+### 🎫 Partecipanti  
+
+- **Email**: `luca.bianchi@email.com` | **Password**: `password123`
+- **Email**: `sara.ferrari@email.com` | **Password**: `password123`
+- **Email**: `andrea.neri@email.com` | **Password**: `password123`
 
 ## 📁 Struttura del Progetto
 
 ```
-harmony-valley-festival/
+FestivalBrainrot/
 ├── app.py                 # Applicazione Flask principale
 ├── models.py             # Modelli dati (User)
 ├── users_dao.py          # Gestione dati utenti
-├── performances_dao.py   # Gestione dati performance
+├── performances_dao.py   # Gestione dati performance  
 ├── tickets_dao.py        # Gestione dati biglietti
-├── init_db.py           # Inizializzazione database
-├── run.py               # Script di avvio
-├── requirements.txt     # Dipendenze Python
-├── README.md           # Questo file
+├── stages_dao.py         # Gestione dati palchi
 ├── db/
-│   ├── init_db.sql     # Schema database
-│   └── festival.db     # Database SQLite (creato automaticamente)
+│   ├── festival.db       # Database SQLite
 ├── static/
-│   ├── css/
-│   │   └── custom.css  # Stili personalizzati
-│   └── uploads/        # Immagini caricate (creata automaticamente)
+│   ├── style.css         # Stili personalizzati
+│   └── uploads/          # Immagini performance caricate
 └── templates/
-    ├── base.html              # Template base
-    ├── home.html              # Homepage
-    ├── register.html          # Registrazione
-    ├── performance_detail.html # Dettaglio performance
-    ├── buy_ticket.html        # Acquisto biglietti
+    ├── base.html                # Template base
+    ├── home.html                # Homepage con filtri
+    ├── register.html            # Registrazione
+    ├── edit_performance.html    # Modifica bozza performance
+    ├── buy_ticket.html          # Acquisto biglietti
     ├── profile_participant.html # Profilo partecipante
     ├── profile_organizer.html   # Profilo organizzatore
     ├── new_performance.html     # Nuova performance
-    └── edit_performance.html    # Modifica performance
+    └── performance_detail.html  # Dettagli performance
 ```
 
-## 🎯 Utilizzo
+## 🎯 Istruzioni per Testare l'Applicazione
 
-### Per i Partecipanti
+### 🎫 Come Partecipante
+
 1. **Registrati** come "Partecipante"
-2. **Esplora** le performance pubblicate
-3. **Filtra** per giorno, palco o genere
-4. **Acquista** il tuo biglietto
-5. **Visualizza** i tuoi biglietti nel profilo
+2. **Esplora** le performance pubblicate nella homepage
+3. **Usa i filtri** per trovare performance per:
+   - Giorno (Venerdì 12, Sabato 13, Domenica 14 Luglio)
+   - Palco (Main Stage, Secondary Stage, Experimental Stage)
+   - Genere (Rock, Pop, Jazz, Electronic, Folk, Hip-Hop, Classical, Blues)
+4. **Clicca** su una performance per vedere i dettagli
+5. **Vai su "Biglietti"** nel menu per acquistare
+6. **Scegli** il tipo di biglietto (attenzione alle regole):
+   - Non puoi comprare più biglietti se hai già un pass multi-giorno
+   - Non puoi comprare pass multi-giorno se hai biglietti giornalieri
+   - Non puoi comprare per giorni già coperti
+7. **Controlla** i tuoi biglietti nel "Profilo"
 
-### Per gli Organizzatori
-1. **Registrati** come "Organizzatore"
-2. **Crea** nuove performance (salvate come bozze)
-3. **Modifica** le performance non ancora pubblicate
-4. **Pubblica** le performance (non più modificabili)
-5. **Monitora** le statistiche di vendita
+### 🎼 Come Organizzatore
 
-## 🔧 Funzionalità Tecniche
+1. **Accedi** con account test: `marco.rossi@email.com`
+2. **Dashboard Organizzatore**: Vedi statistiche vendite e tue performance
+3. **Crea Performance**:
+   - Clicca "Nuova Performance"
+   - **IMPORTANTE**: L'immagine è obbligatoria per la pubblicazione
+   - Compila tutti i campi (artista, giorno, orario, durata, palco, genere)
+   - La performance viene salvata come BOZZA
+4. **Gestisci Performance**:
+   - **Modifica**: Solo bozze non pubblicate
+   - **Pubblica**: Controllo automatico conflitti orari/palco
+   - **Elimina**: Solo bozze non pubblicate
+5. **Vedi Statistiche**: Vendite totali, per tipo biglietto, per giorno
 
-### Validazioni
-- **Frontend**: Validazione HTML5 e controlli JavaScript
-- **Backend**: Validazione server-side per tutti i form
-- **Conflitti**: Controllo automatico sovrapposizioni orari/palchi
-- **Unicità**: Un artista per festival, un biglietto per partecipante
+## 🔧 Funzionalità da Testare
 
-### Sicurezza
-- **Password**: Hash con Werkzeug
-- **File Upload**: Validazione tipi file e nomi sicuri
-- **SQL Injection**: Protezione con query parametrizzate
-- **Session Management**: Flask-Login per gestione sessioni
+### ✅ Validazioni Automatiche
 
-### Responsive Design
-- **Bootstrap 5**: Framework CSS moderno
-- **Mobile First**: Design ottimizzato per tutti i dispositivi
-- **Icone**: Font Awesome per icone vettoriali
-- **Tema Personalizzato**: Colori e stili del festival
+- **Conflitti Orari**: Prova a pubblicare due performance stesso palco/orario
+- **Artista Unico**: Ogni artista può avere solo una performance
+- **Capacità Giornaliera**: Massimo 200 partecipanti per giorno
+- **Regole Biglietti**: Sistema previene acquisti non validi
+
+### ✅ Upload Immagini
+
+- **Performance**: Obbligatoria per pubblicazione (JPG, PNG, GIF, WebP)
+- **Validazione**: Formato e dimensioni controllate
+
+### ✅ Responsive Design
+
+- **Desktop**: Layout a 3 colonne per performance
+- **Tablet**: Layout a 2 colonne  
+- **Mobile**: Layout a 1 colonna con menu hamburger
 
 ## 🎨 Design e UX
 
-### Palette Colori
-- **Primario**: #8B4513 (Marrone Festival)
-- **Secondario**: #DEB887 (Beige Armonia)
-- **Accent**: #CD853F (Oro Antico)
-- **Testo**: #2F4F4F (Grigio Ardesia)
+### 🎨 Palette Colori Festival
 
-### Caratteristiche UX
-- **Navigazione Intuitiva**: Menu chiaro e breadcrumb
-- **Feedback Visivo**: Messaggi flash per ogni azione
-- **Loading States**: Indicatori di caricamento
-- **Animazioni Fluide**: Transizioni CSS per miglior UX
+- **Gradiente Header**: Dal viola al blu per atmosfera festival
+- **Card Performance**: Ombre moderne con bordi arrotondati
+- **Biglietti**: Colori distintivi per ogni tipologia
+- **Badge**: Colori semantici per palchi, giorni, generi
 
-## 📱 Compatibilità
+### ✨ Caratteristiche UX
 
-- **Browser**: Chrome 111+, Firefox 110+
-- **Dispositivi**: Desktop, Tablet, Mobile
-- **Risoluzione**: Responsive da 320px a 1920px+
+- **Feedback Immediato**: Messaggi flash per ogni azione
+- **Stati Interattivi**: Hover e focus visibili
+- **Loading States**: Indicatori durante operazioni
+- **Validazione Real-time**: Controlli istantanei sui form
 
-## 🚀 Deploy su PythonAnywhere
+## 📅 Date Festival
 
-1. **Carica** i file del progetto
-2. **Installa** le dipendenze nel console
-3. **Configura** WSGI file:
-   ```python
-   import sys
-   path = '/home/yourusername/harmony-valley-festival'
-   if path not in sys.path:
-       sys.path.append(path)
-   
-   from app import app as application
-   ```
-4. **Configura** static files mapping:
-   - URL: `/static/`
-   - Directory: `/home/yourusername/harmony-valley-festival/static/`
+**Madness Festival 2025**
 
-## 📈 Dati di Test Inclusi
+- **📍 Luogo**: Colle Tung Tung, Torino
+- **📅 Date**: 12-14 Luglio 2025
+- **🎫 Capacità**: 200 partecipanti/giorno
 
-L'applicazione include:
+## 🚀 Deploy
+
+🌐 **L'applicazione è visibile online all'indirizzo:**
+
+```
+https://borla25.pythonanywhere.com/
+```
+
+## 📊 Dati di Test Inclusi
+
+Il database include:
+
 - **5 utenti** (2 organizzatori, 3 partecipanti)
-- **15+ performance** distribuite nei 3 giorni
-- **1 performance non pubblicata** per testing
-- **3 biglietti acquistati** di tipologie diverse
-- **Immagini placeholder** per le performance
-
-## 🛟 Supporto
-
-Per problemi o domande:
-1. Verifica i **log della console** per errori
-2. Controlla che tutte le **dipendenze siano installate**
-3. Assicurati che la **porta 3000 sia libera**
-4. Verifica i **permessi di scrittura** per upload e database
-
----
-
-**Sviluppato per il corso IAW 2024** 🎓
-**Festival Location**: Valle Armonia, Torino 🏔️
-**Date Festival**: 12-14 Luglio 2024 📅
+- **18 performance** distribuite nei 3 giorni del festival
+- **3 bozze** per testare pubblicazione/modifica
+- **Biglietti acquistati** di diverse tipologie
+- **3 palchi** con capacità diverse
