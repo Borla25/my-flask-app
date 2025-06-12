@@ -213,12 +213,25 @@
                       </div>
                       <div class="col-md-6">
                         <i class="fas fa-ruler text-info me-1"></i>
-                        <strong>Dimensioni:</strong> Min. 600px di altezza
+                        <strong>Dimensioni:</strong> 400-800px altezza
+                      </div>
+                    </div>
+                    <div class="row mt-1">
+                      <div class="col-md-6">
+                        <i class="fas fa-expand-arrows-alt text-primary me-1"></i>
+                        <strong>Proporzioni:</strong> Formato panoramico
+                      </div>
+                      <div class="col-md-6">
+                        <i class="fas fa-lightbulb text-warning me-1"></i>
+                        <strong>Qualità:</strong> HD consigliata
                       </div>
                     </div>
                     <div class="mt-1">
-                      <i class="fas fa-lightbulb text-warning me-1"></i>
-                      <small>Per una migliore qualità, carica immagini ad alta risoluzione</small>
+                      {% if 'edit' not in request.endpoint %}
+                      <small class="text-muted">💡 Evita immagini troppo strette o troppo lunghe</small>
+                      {% else %}
+                      <small class="text-muted">💡 Lascia vuoto per mantenere l'immagine attuale</small>
+                      {% endif %}
                     </div>
                   </div>
                 </div>

@@ -42,8 +42,8 @@ login_manager.init_app(app)
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def save_image(file, prefix, max_width=None, min_height=None):
-    """Save and resize uploaded image - CON VALIDAZIONE ALTEZZA"""
+def save_image(file, prefix, max_width=None, min_height=None, max_height=None):
+    """Save and resize uploaded image - CON VALIDAZIONE ALTEZZA E PROPORZIONI"""
     if file and allowed_file(file.filename):
         filename = file.filename
         timestamp = int(datetime.now().timestamp())
@@ -55,21 +55,33 @@ def save_image(file, prefix, max_width=None, min_height=None):
         if min_height and img.height < min_height:
             return None, f"L'immagine deve essere alta almeno {min_height}px (attuale: {img.height}px)"
         
+        # ✅ NUOVO: Controlla altezza massima
+        if max_height and img.height > max_height:
+            return None, f"L'immagine non può essere più alta di {max_height}px (attuale: {img.height}px)"
+        
+        # ✅ NUOVO: Controlla proporzioni (formato panoramico)
+        aspect_ratio = img.width / img.height
+        if aspect_ratio < 0.8:  # Troppo verticale
+            return None, f"L'immagine è troppo stretta (proporzioni {aspect_ratio:.2f}). Usa un formato più panoramico."
+        
         # Ridimensiona sempre per web
         if max_width and img.width > max_width:
             ratio = max_width / img.width
             new_height = int(img.height * ratio)
             
-            # ✅ NUOVO: Controlla che dopo il resize sia ancora abbastanza alta
+            # ✅ NUOVO: Controlla che dopo il resize sia ancora valida
             if min_height and new_height < min_height:
                 return None, f"Dopo il ridimensionamento l'immagine sarebbe troppo bassa ({new_height}px < {min_height}px)"
+            
+            if max_height and new_height > max_height:
+                return None, f"Dopo il ridimensionamento l'immagine sarebbe troppo alta ({new_height}px > {max_height}px)"
             
             img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
         
         filepath = f"{app.config['UPLOAD_FOLDER']}/{new_filename}"
         img.save(filepath, "WebP", quality=60, optimize=True)
         
-        return new_filename, None  # ✅ NUOVO: Ritorna anche messaggio errore
+        return new_filename, None
     
     return None, "File non valido"
 
@@ -506,11 +518,18 @@ def edit_performance_post(id):
     
     performance_image = request.files.get('performance_image')
     if performance_image:
-        image_filename, error_message = save_image(performance_image, f"perf_{form_data['artist_name']}", PERFORMANCE_IMG_WIDTH, min_height=100)
-        if error_message:
-            flash(error_message, "danger")
-            return redirect(url_for("edit_performance", id=id))
-        form_data['performance_image'] = image_filename
+        # ✅ NUOVO: Validazione completa con min/max altezza
+        result = save_image(performance_image, f"perf_{form_data['artist_name']}", 
+                       PERFORMANCE_IMG_WIDTH, 
+                       min_height=400,     # Min 400px (come le immagini a destra)
+                       max_height=800)     # Max 800px (evita immagini troppo lunghe)
+    
+        if isinstance(result, tuple):
+            image_filename, error_message = result
+            if error_message:
+                flash(f"Errore immagine: {error_message}", "danger")
+                return redirect(url_for("edit_performance", id=id))
+            form_data['performance_image'] = image_filename
     
     success = performances_dao.update_performance(form_data)
     
