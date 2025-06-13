@@ -15,8 +15,7 @@
           <!-- Sempre icona di default, nessuna immagine profilo per partecipanti -->
           <div
             class="profile-avatar-placeholder rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3 shadow-sm"
-            style="width: 120px; height: 120px"
-          >
+            style="width: 120px; height: 120px">
             <!-- Icona utente grande come avatar predefinito -->
             <i class="fas fa-user fa-3x text-muted"></i>
           </div>
@@ -102,9 +101,7 @@
                         <i class="fas fa-calendar me-1"></i>
                         Acquistato il
                         <!-- Tag time con datetime per semantica -->
-                        <time datetime="{{ ticket.purchase_date }}"
-                          >{{ ticket.purchase_date }}</time
-                        >
+                        <time datetime="{{ ticket.purchase_date }}">{{ ticket.purchase_date }}</time>
                       </small>
                     </footer>
                   </div>
@@ -138,10 +135,7 @@
               Acquista il tuo biglietto per partecipare al Madness Festival!
             </p>
             <!-- Call-to-action grande per acquistare primo biglietto -->
-            <a
-              href="{{ url_for('buy_ticket') }}"
-              class="btn btn-primary btn-lg shadow-sm px-4"
-            >
+            <a href="{{ url_for('buy_ticket') }}" class="btn btn-primary btn-lg shadow-sm px-4">
               <i class="fas fa-shopping-cart me-2"></i>Acquista Biglietto
             </a>
           </div>

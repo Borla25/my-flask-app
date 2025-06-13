@@ -27,17 +27,9 @@
               <div class="row">
                 <!-- Campo Nome Completo -->
                 <div class="col-md-6 mb-3">
-                  <label for="full_name" class="form-label fw-semibold"
-                    >Nome completo</label
-                  >
+                  <label for="full_name" class="form-label fw-semibold">Nome completo</label>
                   <!-- Input text obbligatorio per nome e cognome -->
-                  <input
-                    type="text"
-                    class="form-control rounded border-2"
-                    id="full_name"
-                    name="full_name"
-                    required
-                  />
+                  <input type="text" class="form-control rounded border-2" id="full_name" name="full_name" required />
                   <!-- Testo di aiuto che spiega cosa inserire -->
                   <div class="form-text small">
                     Inserisci il tuo nome e cognome
@@ -46,17 +38,9 @@
 
                 <!-- Campo Email -->
                 <div class="col-md-6 mb-3">
-                  <label for="email" class="form-label fw-semibold"
-                    >Email</label
-                  >
+                  <label for="email" class="form-label fw-semibold">Email</label>
                   <!-- Input email con validazione browser automatica -->
-                  <input
-                    type="email"
-                    class="form-control rounded border-2"
-                    id="email"
-                    name="email"
-                    required
-                  />
+                  <input type="email" class="form-control rounded border-2" id="email" name="email" required />
                   <!-- Spiegazione dell'uso dell'email -->
                   <div class="form-text small">
                     Utilizzeremo questa email per contattarti
@@ -66,18 +50,10 @@
 
               <!-- Campo Password -->
               <div class="mb-3">
-                <label for="password" class="form-label fw-semibold"
-                  >Password</label
-                >
+                <label for="password" class="form-label fw-semibold">Password</label>
                 <!-- Input password con validazione lunghezza minima -->
-                <input
-                  type="password"
-                  class="form-control rounded border-2"
-                  id="password"
-                  name="password"
-                  required
-                  minlength="8"
-                />
+                <input type="password" class="form-control rounded border-2" id="password" name="password" required
+                  minlength="8" />
                 <!-- Informazione sui requisiti della password -->
                 <div class="form-text small">Minimo 8 caratteri</div>
               </div>
@@ -85,16 +61,9 @@
 
             <!-- Seconda sezione: Tipo di account -->
             <div class="mb-4">
-              <label for="user_type" class="form-label fw-semibold"
-                >Tipo di account</label
-              >
+              <label for="user_type" class="form-label fw-semibold">Tipo di account</label>
               <!-- Select dropdown per scegliere ruolo utente -->
-              <select
-                class="form-select rounded border-2"
-                id="user_type"
-                name="user_type"
-                required
-              >
+              <select class="form-select rounded border-2" id="user_type" name="user_type" required>
                 <!-- Opzione placeholder che forza la selezione -->
                 <option value="">Seleziona...</option>
                 <!-- Ruolo partecipante: può comprare biglietti -->
@@ -125,12 +94,8 @@
             <p class="mb-0">
               Hai già un account?
               <!-- Bottone che apre il modal di login -->
-              <button
-                type="button"
-                class="btn btn-link p-0 text-decoration-none fw-medium align-baseline"
-                data-bs-toggle="modal"
-                data-bs-target="#loginModal"
-              >
+              <button type="button" class="btn btn-link p-0 text-decoration-none fw-medium align-baseline"
+                data-bs-toggle="modal" data-bs-target="#loginModal">
                 Accedi qui
               </button>
             </p>

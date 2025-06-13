@@ -15,8 +15,7 @@ content %}
           <!-- Placeholder circolare con icona utente -->
           <div
             class="profile-avatar-placeholder rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3 shadow-sm"
-            style="width: 120px; height: 120px"
-          >
+            style="width: 120px; height: 120px">
             <!-- Icona utente grande come placeholder -->
             <i class="fas fa-user fa-3x text-muted"></i>
           </div>
@@ -52,9 +51,7 @@ content %}
                 <h3 class="text-primary h3 fw-bold mb-1">
                   {{ stats.total_tickets }}
                 </h3>
-                <small class="text-muted fw-medium"
-                  >Biglietti Venduti Totali</small
-                >
+                <small class="text-muted fw-medium">Biglietti Venduti Totali</small>
               </div>
             </div>
             <!-- Ricavi totali del festival -->
@@ -63,9 +60,7 @@ content %}
                 <h3 class="text-success h3 fw-bold mb-1">
                   €{{ stats.total_revenue }}
                 </h3>
-                <small class="text-muted fw-medium"
-                  >Ricavi Totali Festival</small
-                >
+                <small class="text-muted fw-medium">Ricavi Totali Festival</small>
               </div>
             </div>
           </div>
@@ -164,10 +159,7 @@ content %}
           <i class="fas fa-music me-2 text-primary"></i>Le mie Performance
         </h2>
         <!-- Bottone per creare nuova performance -->
-        <a
-          href="{{ url_for('new_performance') }}"
-          class="btn btn-primary shadow-sm px-4"
-        >
+        <a href="{{ url_for('new_performance') }}" class="btn btn-primary shadow-sm px-4">
           <i class="fas fa-plus me-2"></i>Nuova Performance
         </a>
       </header>
@@ -189,18 +181,15 @@ content %}
               <div class="col-md-2 mb-3 mb-md-0">
                 {% if performance.performance_image %}
                 <!-- Immagine miniatura della performance -->
-                <img
-                  src="{{ url_for('static', filename='uploads/' + performance.performance_image) }}"
+                <img src="{{ url_for('static', filename='uploads/' + performance.performance_image) }}"
                   class="performance-thumbnail img-fluid rounded shadow-sm"
                   alt="Immagine di {{ performance.artist_name }}"
-                  style="width: 80px; height: 80px; object-fit: cover"
-                />
+                  style="width: 80px; height: 80px; object-fit: cover" />
                 {% else %}
                 <!-- Placeholder quadrato con icona musicale -->
                 <div
                   class="performance-thumbnail-placeholder bg-light rounded d-flex align-items-center justify-content-center shadow-sm"
-                  style="width: 80px; height: 80px"
-                >
+                  style="width: 80px; height: 80px">
                   <i class="fas fa-music fa-2x text-muted"></i>
                 </div>
                 {% endif %}
@@ -244,11 +233,8 @@ content %}
                     <!-- Gruppo di bottoni verticali -->
                     <div class="btn-group-vertical btn-group-sm d-grid gap-1">
                       <!-- Bottone sempre visibile: visualizza dettagli -->
-                      <a
-                        href="{{ url_for('performance_detail', id=performance.id) }}"
-                        class="btn btn-outline-primary btn-sm shadow-sm"
-                        title="Visualizza dettagli"
-                      >
+                      <a href="{{ url_for('performance_detail', id=performance.id) }}"
+                        class="btn btn-outline-primary btn-sm shadow-sm" title="Visualizza dettagli">
                         <i class="fas fa-eye me-1"></i>Dettagli
                       </a>
 
@@ -256,43 +242,29 @@ content %}
                       {% if not performance.published %}
 
                       <!-- Bottone modifica (solo per bozze) -->
-                      <a
-                        href="{{ url_for('edit_performance', id=performance.id) }}"
-                        class="btn btn-outline-secondary btn-sm shadow-sm"
-                        title="Modifica performance"
-                      >
+                      <a href="{{ url_for('edit_performance', id=performance.id) }}"
+                        class="btn btn-outline-secondary btn-sm shadow-sm" title="Modifica performance">
                         <i class="fas fa-edit me-1"></i>Modifica
                       </a>
 
                       <!-- Form per pubblicare la performance -->
-                      <form
-                        method="POST"
+                      <form method="POST"
                         action="{{ url_for('publish_performance_route', performance_id=performance.id) }}"
-                        class="d-inline"
-                      >
+                        class="d-inline">
                         <!-- Bottone pubblica con conferma -->
-                        <button
-                          type="submit"
-                          class="btn btn-outline-success btn-sm w-100 shadow-sm"
+                        <button type="submit" class="btn btn-outline-success btn-sm w-100 shadow-sm"
                           title="Pubblica performance"
-                          onclick="return confirm('Pubblicare questa performance? Non sarà più modificabile.')"
-                        >
+                          onclick="return confirm('Pubblicare questa performance? Non sarà più modificabile.')">
                           <i class="fas fa-share me-1"></i>Pubblica
                         </button>
                       </form>
 
                       <!-- Form per eliminare la performance -->
-                      <form
-                        method="POST"
-                        action="{{ url_for('delete_performance_route', id=performance.id) }}"
+                      <form method="POST" action="{{ url_for('delete_performance_route', id=performance.id) }}"
                         style="display: inline-block"
-                        onsubmit="return confirm('Sei sicuro di voler eliminare questa performance?')"
-                      >
+                        onsubmit="return confirm('Sei sicuro di voler eliminare questa performance?')">
                         <!-- Bottone elimina -->
-                        <button
-                          type="submit"
-                          class="btn btn-danger btn-sm w-100"
-                        >
+                        <button type="submit" class="btn btn-danger btn-sm w-100">
                           <i class="fas fa-trash me-1"></i>Elimina
                         </button>
                       </form>
@@ -321,10 +293,7 @@ content %}
           Inizia creando la tua prima performance per il festival!
         </p>
         <!-- Call-to-action grande per creare prima performance -->
-        <a
-          href="{{ url_for('new_performance') }}"
-          class="btn btn-primary btn-lg shadow-sm px-4"
-        >
+        <a href="{{ url_for('new_performance') }}" class="btn btn-primary btn-lg shadow-sm px-4">
           <i class="fas fa-plus me-2"></i>Crea Prima Performance
         </a>
       </div>

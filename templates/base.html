@@ -1,260 +1,214 @@
 <!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8" />
 
-    <!-- Configurazione responsive per dispositivi mobile -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+  <meta charset="UTF-8" />
 
-    <!-- Template inheritance: permette ai template figli di personalizzare il titolo -->
-    <title>{% block title %}Madness Festival{% endblock %}</title>
+  <!-- Configurazione responsive per dispositivi mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Framework CSS Bootstrap 5.3 per componenti UI e grid system responsive -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+  <!-- Template inheritance: permette ai template figli di personalizzare il titolo -->
+  <title>{% block title %}Madness Festival{% endblock %}</title>
 
-    <!-- Font Awesome completo - tutte le icone e stili base -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-      rel="stylesheet"
-    />
+  <!-- Framework CSS Bootstrap 5.3 per componenti UI e grid system responsive -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <!-- CSS personalizzato del progetto - caricato per ultimo per sovrascrivere Bootstrap -->
-    <link
-      href="{{ url_for('static', filename='style.css') }}"
-      rel="stylesheet"
-    />
-  </head>
+  <!-- Font Awesome completo - tutte le icone e stili base -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 
-  <body>
-    <!-- Header principale con navigazione -->
-    <header>
-      <nav class="navbar navbar-expand-lg navbar-dark shadow">
-        <div class="container">
-          <!-- Nome del festival che punta alla homepage - funge da logo -->
-          <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
-            <!-- Icona Font Awesome per il tema musicale del festival -->
-            <i class="fas fa-music me-2"></i>Madness Festival
-          </a>
+  <!-- CSS personalizzato del progetto - caricato per ultimo per sovrascrivere Bootstrap -->
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+</head>
 
-          <!-- Bottone hamburger per menu mobili -->
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-          >
-            <!-- Icona del bottone hamburger -->
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <!-- Menu di navigazione collassabile - si nasconde su mobile -->
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <!-- Menu principale (lato sinistro della navbar) -->
-            <ul class="navbar-nav me-auto">
-              <!-- Menu visibile SOLO ai PARTECIPANTI autenticati -->
-              {% if current_user.is_authenticated and current_user.user_type ==
-              'participant' %}
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('buy_ticket') }}">
-                  <i class="fas fa-ticket-alt me-1"></i>Biglietti
-                </a>
-              </li>
-              {% endif %}
-
-              <!-- Menu visibile SOLO agli ORGANIZZATORI autenticati -->
-              {% if current_user.is_authenticated and current_user.user_type ==
-              'organizer' %}
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('new_performance') }}">
-                  <i class="fas fa-plus me-1"></i>Nuova Performance
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('profile') }}"> <!-- Reindirizza al profilo dove si vedono le performance-->
-                  <i class="fas fa-list me-1"></i>Le mie Performance
-                </a>
-              </li>
-              {% endif %}
-            </ul>
-
-            <!-- Menu utente (lato destro della navbar) -->
-            <ul class="navbar-nav ms-auto">
-              <!-- Sezione per utenti AUTENTICATI - mostra dropdown con opzioni -->
-              {% if current_user.is_authenticated %}
-              <li class="nav-item dropdown">
-                <!-- Dropdown trigger con nome utente completo -->
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  data-bs-toggle="dropdown"
-                >
-                  <i class="fas fa-user me-1"></i>{{ current_user.full_name }}
-                </a>
-
-                <!-- Menu dropdown con opzioni utente -->
-                <ul class="dropdown-menu">
-                  <!-- Link al profilo utente -->
-                  <li>
-                    <a class="dropdown-item" href="{{ url_for('profile') }}">
-                      <i class="fas fa-user-circle me-2"></i>Profilo
-                    </a>
-                  </li>
-                  <!-- Separatore -->
-                  <li><hr class="dropdown-divider" /></li>
-                  <!-- Link per logout -->
-                  <li>
-                    <a class="dropdown-item" href="{{ url_for('logout') }}">
-                      <i class="fas fa-sign-out-alt me-2"></i>Logout
-                    </a>
-                  </li>
-                </ul>
-              </li>
-
-              <!-- Sezione per utenti NON AUTENTICATI - bottoni registrazione e login -->
-              {% else %}
-              <!-- Bottone registrazione con stile outline -->
-              <li class="nav-item me-2">
-                <a
-                  class="btn btn-outline-light"
-                  href="{{ url_for('register') }}"
-                >
-                  <i class="fas fa-user-plus me-1"></i>Registrati
-                </a>
-              </li>
-
-              <!-- Bottone login che apre modal -->
-              <li class="nav-item">
-                <button
-                  class="btn btn-light"
-                  data-bs-toggle="modal"
-                  data-bs-target="#loginModal"
-                >
-                  <i class="fas fa-sign-in-alt me-1"></i>Login
-                </button>
-              </li>
-              {% endif %}
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header>
-
-    <!-- Sistema di messaggi flash per feedback utente -->
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %}
-    <div class="container mt-3">
-      <!-- Loop attraverso tutti i messaggi flash con categorie -->
-      {% for category, message in messages %}
-      <div
-        class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
-      >
-        <i class="fas fa-info-circle me-2"></i>{{ message }}
-
-        <!-- Bottone X per chiudere manualmente il messaggio -->
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-        ></button>
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %} {% endwith %}
-
-    <!-- Area principale del contenuto - qui si inseriscono i template figli -->
-    <main>{% block content %}{% endblock %}</main>
-
-    <!-- Modal di login - sempre presente nel DOM ma nascosto inizialmente -->
-    <div class="modal fade" id="loginModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <!-- Header del modal con titolo e bottone chiusura -->
-          <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="fas fa-sign-in-alt me-2"></i>Accedi al Festival
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-
-          <!-- Form di login che invia POST alla route login -->
-          <form method="POST" action="{{ url_for('login') }}">
-            <div class="modal-body">
-              <!-- Campo email con validazione -->
-              <div class="mb-3">
-                <label for="loginEmail" class="form-label">Email</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="loginEmail"
-                  name="email"
-                  required
-                />
-              </div>
-
-              <!-- Campo password -->
-              <div class="mb-3">
-                <label for="loginPassword" class="form-label">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="loginPassword"
-                  name="password"
-                  required
-                />
-              </div>
-            </div>
-
-            <!-- Footer del modal -->
-            <div class="modal-footer">
-              <!-- Bottone per annullare e chiudere il modal -->
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                <i class="fas fa-times me-1"></i>Annulla
-              </button>
-              <!-- Bottone submit per inviare il form -->
-              <button type="submit" class="btn btn-primary">
-                <i class="fas fa-sign-in-alt me-1"></i>Accedi
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer informativo del sito -->
-    <footer class="footer-festival py-4 mt-5">
+<body>
+  <!-- Header principale con navigazione -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark shadow">
       <div class="container">
-        <div class="row">
-          <!-- Colonna sinistra con informazioni evento -->
-          <div class="col-md-6">
-            <h5 class="text-white">Madness Festival 2025</h5>
-            <p class="text-muted mb-0">
-              <i class="fas fa-map-marker-alt me-1"></i>
-              Colle Tung Tung, Torino - 12-14 Luglio 2025
-            </p>
-          </div>
+        <!-- Nome del festival che punta alla homepage - funge da logo -->
+        <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
+          <!-- Icona Font Awesome per il tema musicale del festival -->
+          <i class="fas fa-music me-2"></i>Madness Festival
+        </a>
 
-          <!-- Colonna destra con credits -->
-          <div class="col-md-6 text-md-end">
-            <p class="text-muted mb-0">
-              Creato per il corso <strong>IAW</strong>
-            </p>
-          </div>
+        <!-- Bottone hamburger per menu mobili -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <!-- Icona del bottone hamburger -->
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menu di navigazione collassabile - si nasconde su mobile -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <!-- Menu principale (lato sinistro della navbar) -->
+          <ul class="navbar-nav me-auto">
+            <!-- Menu visibile SOLO ai PARTECIPANTI autenticati -->
+            {% if current_user.is_authenticated and current_user.user_type ==
+            'participant' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('buy_ticket') }}">
+                <i class="fas fa-ticket-alt me-1"></i>Biglietti
+              </a>
+            </li>
+            {% endif %}
+
+            <!-- Menu visibile SOLO agli ORGANIZZATORI autenticati -->
+            {% if current_user.is_authenticated and current_user.user_type ==
+            'organizer' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('new_performance') }}">
+                <i class="fas fa-plus me-1"></i>Nuova Performance
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('profile') }}">
+                <!-- Reindirizza al profilo dove si vedono le performance-->
+                <i class="fas fa-list me-1"></i>Le mie Performance
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+
+          <!-- Menu utente (lato destro della navbar) -->
+          <ul class="navbar-nav ms-auto">
+            <!-- Sezione per utenti AUTENTICATI - mostra dropdown con opzioni -->
+            {% if current_user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <!-- Dropdown trigger con nome utente completo -->
+              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                <i class="fas fa-user me-1"></i>{{ current_user.full_name }}
+              </a>
+
+              <!-- Menu dropdown con opzioni utente -->
+              <ul class="dropdown-menu">
+                <!-- Link al profilo utente -->
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('profile') }}">
+                    <i class="fas fa-user-circle me-2"></i>Profilo
+                  </a>
+                </li>
+                <!-- Separatore -->
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+                <!-- Link per logout -->
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            <!-- Sezione per utenti NON AUTENTICATI - bottoni registrazione e login -->
+            {% else %}
+            <!-- Bottone registrazione con stile outline -->
+            <li class="nav-item me-2">
+              <a class="btn btn-outline-light" href="{{ url_for('register') }}">
+                <i class="fas fa-user-plus me-1"></i>Registrati
+              </a>
+            </li>
+
+            <!-- Bottone login che apre modal -->
+            <li class="nav-item">
+              <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal">
+                <i class="fas fa-sign-in-alt me-1"></i>Login
+              </button>
+            </li>
+            {% endif %}
+          </ul>
         </div>
       </div>
-    </footer>
+    </nav>
+  </header>
 
-    <!-- JavaScript Bootstrap per funzionalità interattive (collapse, modal, dropdown) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+  <!-- Sistema di messaggi flash per feedback utente -->
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %}
+  <div class="container mt-3">
+    <!-- Loop attraverso tutti i messaggi flash con categorie -->
+    {% for category, message in messages %}
+    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+      <i class="fas fa-info-circle me-2"></i>{{ message }}
+
+      <!-- Bottone X per chiudere manualmente il messaggio -->
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %} {% endwith %}
+
+  <!-- Area principale del contenuto - qui si inseriscono i template figli -->
+  <main>{% block content %}{% endblock %}</main>
+
+  <!-- Modal di login - sempre presente nel DOM ma nascosto inizialmente -->
+  <div class="modal fade" id="loginModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Header del modal con titolo e bottone chiusura -->
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="fas fa-sign-in-alt me-2"></i>Accedi al Festival
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Form di login che invia POST alla route login -->
+        <form method="POST" action="{{ url_for('login') }}">
+          <div class="modal-body">
+            <!-- Campo email con validazione -->
+            <div class="mb-3">
+              <label for="loginEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="loginEmail" name="email" required />
+            </div>
+
+            <!-- Campo password -->
+            <div class="mb-3">
+              <label for="loginPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="loginPassword" name="password" required />
+            </div>
+          </div>
+
+          <!-- Footer del modal -->
+          <div class="modal-footer">
+            <!-- Bottone per annullare e chiudere il modal -->
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="fas fa-times me-1"></i>Annulla
+            </button>
+            <!-- Bottone submit per inviare il form -->
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-sign-in-alt me-1"></i>Accedi
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer informativo del sito -->
+  <footer class="footer-festival py-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <!-- Colonna sinistra con informazioni evento -->
+        <div class="col-md-6">
+          <h5 class="text-white">Madness Festival 2025</h5>
+          <p class="text-muted mb-0">
+            <i class="fas fa-map-marker-alt me-1"></i>
+            Colle Tung Tung, Torino - 12-14 Luglio 2025
+          </p>
+        </div>
+
+        <!-- Colonna destra con credits -->
+        <div class="col-md-6 text-md-end">
+          <p class="text-muted mb-0">
+            Creato per il corso <strong>IAW</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript Bootstrap per funzionalità interattive (collapse, modal, dropdown) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>

@@ -258,7 +258,7 @@ def get_festival_stats():
         }
         
     except sqlite3.Error:
-        # Fallback con valori di default per robustezza
+        # Fallback con valori di default
         return {
             'total_tickets': 0,
             'total_revenue': "0.00",

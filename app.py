@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, abort
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from flask_login import (
     LoginManager,
     login_user,
@@ -63,7 +63,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def save_image(file, prefix):
-    """Salva l'immagine ridimensionandola e tagliandola a 1000x750px (crop centrale)."""
+    """Salva l'immagine ridimensionandola e tagliandola a 450x450 (crop centrale)."""
     if file and allowed_file(file.filename):
         from PIL import Image
         import os
@@ -535,7 +535,7 @@ def publish_performance_route(performance_id):
         flash('Performance non trovata o non autorizzato.', 'error')
         return redirect(url_for('profile'))
     
-    # CONTROLLO OBBLIGATORIO: Performance deve avere immagine
+    # Performance deve avere immagine
     if not performance['performance_image']:
         flash(f'Impossibile pubblicare "{performance["artist_name"]}": devi caricare un\'immagine promozionale prima della pubblicazione.', 'warning')
         return redirect(url_for('profile'))
