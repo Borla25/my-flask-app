@@ -44,7 +44,7 @@ L'applicazione include account preconfigurati per il testing:
 ## 📁 Struttura del Progetto
 
 ```
-FestivalBrainrot/
+MadnessFestival/
 ├── app.py                 # Applicazione Flask principale
 ├── models.py             # Modelli dati (User)
 ├── users_dao.py          # Gestione dati utenti
